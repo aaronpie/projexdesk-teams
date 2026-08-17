@@ -1,0 +1,57 @@
+{
+  "format": "openmaus.catalog",
+  "version": 1,
+  "teams": [
+    {
+      "slug": "seo-growth",
+      "name": "SEO Growth Team",
+      "summary": "Turn search opportunities into prioritized technical fixes and useful content.",
+      "category": "Marketing",
+      "manifest": "teams/seo-growth/team.mausteam.json",
+      "readme": "teams/seo-growth/README.md",
+      "members": 4,
+      "skills": [
+        "teams/seo-growth/skills/keyword-opportunity-map/SKILL.md",
+        "teams/seo-growth/skills/technical-seo-triage/SKILL.md",
+        "teams/seo-growth/skills/content-brief/SKILL.md"
+      ],
+      "requires": {
+        "apps": ["Google Search Console", "Google Analytics", "Google Sheets"]
+      }
+    },
+    {
+      "slug": "engineering",
+      "name": "Engineering Team",
+      "summary": "Plan, build, review, test, and ship software with clear ownership.",
+      "category": "Engineering",
+      "manifest": "teams/engineering/team.mausteam.json",
+      "readme": "teams/engineering/README.md",
+      "members": 4,
+      "skills": [
+        "teams/engineering/skills/architecture-decision/SKILL.md",
+        "teams/engineering/skills/implementation-plan/SKILL.md",
+        "teams/engineering/skills/release-readiness/SKILL.md"
+      ],
+      "requires": {
+        "apps": ["GitHub"]
+      }
+    },
+    {
+      "slug": "100x-marketing",
+      "name": "100x Marketing Team",
+      "summary": "Find a sharp position, ship campaigns quickly, and learn from measured experiments.",
+      "category": "Marketing",
+      "manifest": "teams/100x-marketing/team.mausteam.json",
+      "readme": "teams/100x-marketing/README.md",
+      "members": 4,
+      "skills": [
+        "teams/100x-marketing/skills/positioning-brief/SKILL.md",
+        "teams/100x-marketing/skills/campaign-sprint/SKILL.md",
+        "teams/100x-marketing/skills/experiment-review/SKILL.md"
+      ],
+      "requires": {
+        "apps": ["Google Analytics", "Google Sheets", "Slack"]
+      }
+    }
+  ]
+}
