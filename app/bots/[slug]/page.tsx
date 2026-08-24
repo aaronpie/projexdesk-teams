@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import ConnectorIcon from "@/components/ConnectorIcon";
 import InstallButton from "@/components/InstallButton";
-import { getPackage, getPackages, packageInstallUrl, packageRawUrl } from "@/lib/packages";
+import { getPackage, getPackages, packageInstallUrl, packageRawUrl, proofHeadline } from "@/lib/packages";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -41,6 +41,27 @@ export default async function PackagePage({ params }: Props) {
             <div className="eyebrow"><span /> {entry.category.toUpperCase()}</div>
             <h1>{entry.name}</h1>
             <p>{entry.tagline}</p>
+            {entry.proof && (
+              <div className="proof-banner">
+                <div className="proof-figure">
+                  <strong>{proofHeadline(entry.proof)}</strong>
+                  <span>{entry.proof.credibility === "receipts" ? "receipts shown" : "creator's claim"}</span>
+                </div>
+                <div className="proof-body">
+                  {entry.proof.source.quote && <blockquote>&ldquo;{entry.proof.source.quote}&rdquo;</blockquote>}
+                  <p>
+                    <a href={entry.proof.source.url} target="_blank" rel="noreferrer">
+                      {entry.proof.source.author} on X
+                    </a>
+                    {entry.proof.source.date && <span> · {entry.proof.source.date}</span>}
+                  </p>
+                  <em>
+                    The figure is the creator&apos;s own public claim. BotMRR links the source and verifies the post
+                    exists — never the revenue.
+                  </em>
+                </div>
+              </div>
+            )}
             <div className="detail-actions">
               <InstallButton installUrl={packageInstallUrl(entry.id)} />
               <a className="button button-secondary" href={packageRawUrl(entry.id)} target="_blank" rel="noreferrer">

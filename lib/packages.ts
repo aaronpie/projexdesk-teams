@@ -4,6 +4,8 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 
+import { proofValue } from "./proof";
+
 export type MausColor =
   | "green"
   | "blue"
@@ -73,7 +75,18 @@ export interface BotPackage {
     instructions: string;
   }>;
   examples?: Array<{ title: string; input: string; output: string }>;
+  /** A public money claim behind this playbook. Always the creator's own
+   * claim, always linked to its source — BotMRR verifies the post exists,
+   * never the revenue. */
+  proof?: {
+    amount: string;
+    period: "monthly" | "weekly" | "daily" | "total";
+    source: { url: string; author: string; date?: string; quote?: string };
+    credibility?: "receipts" | "claimed";
+  };
 }
+
+export { proofHeadline, proofValue } from "./proof";
 
 const packageDirectory = join(process.cwd(), "packages");
 
@@ -93,7 +106,14 @@ export function getPackages(): BotPackage[] {
   return readdirSync(packageDirectory)
     .filter((name) => name.endsWith(".md"))
     .map((name) => parsePackageMarkdown(name, readFileSync(join(packageDirectory, name), "utf8")))
-    .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || a.name.localeCompare(b.name));
+    .sort(
+      (a, b) =>
+        // the board reads like a leaderboard: biggest public claim first,
+        // then featured, then name — playbooks without receipts still list
+        proofValue(b) - proofValue(a) ||
+        Number(Boolean(b.featured)) - Number(Boolean(a.featured)) ||
+        a.name.localeCompare(b.name),
+    );
 }
 
 export function getPackage(id: string): BotPackage | undefined {

@@ -117,6 +117,28 @@ function validatePackage(path, slug, expectedMembers) {
   if (!Number.isInteger(pkg.setupMinutes) || pkg.setupMinutes < 1 || pkg.setupMinutes > 240) {
     fail(`${path}: package.setupMinutes must be 1-240`);
   }
+  if (pkg.proof !== undefined) {
+    const proof = pkg.proof;
+    if (!text(proof?.amount, 20) || !/^\$[\d,.]+\s?[KkMm]?\+?$/.test(proof.amount.trim())) {
+      fail(`${path}: proof.amount must be a dollar figure like "$4,200" or "$12K"`);
+    }
+    if (!["monthly", "weekly", "daily", "total"].includes(proof?.period)) {
+      fail(`${path}: proof.period must be monthly, weekly, daily, or total`);
+    }
+    if (typeof proof?.source?.url !== "string" || !/^https:\/\/\S+$/.test(proof.source.url)) {
+      fail(`${path}: proof.source.url must be an https link to the public claim`);
+    }
+    if (!text(proof?.source?.author, 80)) fail(`${path}: proof.source.author is required`);
+    if (proof?.source?.quote !== undefined && !text(proof.source.quote, 500)) {
+      fail(`${path}: proof.source.quote must be 1-500 characters`);
+    }
+    if (proof?.source?.date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(proof.source.date)) {
+      fail(`${path}: proof.source.date must be YYYY-MM-DD`);
+    }
+    if (proof?.credibility !== undefined && !["receipts", "claimed"].includes(proof.credibility)) {
+      fail(`${path}: proof.credibility must be receipts or claimed`);
+    }
+  }
   if (!list(pkg.requirements?.apps, 30) || !list(pkg.requirements?.capabilities, 20)) {
     fail(`${path}: package.requirements is invalid`);
   }
@@ -129,7 +151,7 @@ function validatePackage(path, slug, expectedMembers) {
     fail(`${path}: package.agents must contain 1-50 agents`);
     return;
   }
-  if (pkg.agents.length !== expectedMembers) {
+  if (expectedMembers !== undefined && pkg.agents.length !== expectedMembers) {
     fail(`${path}: catalog says ${expectedMembers} members but package has ${pkg.agents.length}`);
   }
 
@@ -245,14 +267,24 @@ if (!catalog || catalog.format !== "openmaus.catalog" || catalog.version !== 1 |
   const packageFiles = readdirSync(join(root, "packages"))
     .filter((name) => name.endsWith(".md"))
     .map((name) => `packages/${name}`);
+  let standalone = 0;
   for (const packageFile of packageFiles) {
-    if (!listedPackages.has(packageFile)) fail(`${packageFile}: package is missing from catalog.json`);
+    if (listedPackages.has(packageFile)) continue;
+    // Community playbooks may ship as standalone Markdown — fully validated,
+    // just not part of the app's team-library catalog (which additionally
+    // requires a manifest, README, and skills). The package id must still
+    // match its filename so raw URLs and site routes agree.
+    const slug = packageFile.slice("packages/".length, -".md".length);
+    validatePackage(packageFile, slug, undefined);
+    standalone += 1;
+  }
+
+  if (errors.length === 0) {
+    console.log(`Validated ${catalog.teams.length} catalog teams and ${standalone} standalone playbooks.`);
   }
 }
 
 if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
-} else {
-  console.log(`Validated ${catalog.teams.length} teams.`);
 }
