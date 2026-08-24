@@ -75,7 +75,7 @@ export default function Directory({
           <div className="eyebrow"><span /> OPEN-SOURCE BOT MARKETPLACE</div>
           <h1>Bots that do the work.</h1>
           <p className="hero-copy">
-            Pick an outcome. Install the complete team. Connect your apps. Turn it on.
+            Pick an outcome. Give one Markdown file to your Chief of Staff. Run it in any agent product.
           </p>
           <label className="hero-search">
             <Search aria-hidden="true" size={21} strokeWidth={1.8} />
@@ -84,7 +84,7 @@ export default function Directory({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="What should a bot do for you?"
-              aria-label="Search BotMRR packages"
+              aria-label="Search BotMRR playbooks"
             />
             <kbd>/</kbd>
           </label>
@@ -101,7 +101,7 @@ export default function Directory({
             ))}
           </nav>
           <div className="hero-proof">
-            <div><strong>{stats.packages}</strong><span>installable packages</span></div>
+            <div><strong>{stats.packages}</strong><span>portable playbooks</span></div>
             <div><strong>{stats.agents}</strong><span>specialist bots</span></div>
             <div><strong>{stats.playbooks}</strong><span>embedded playbooks</span></div>
             <div><strong>0</strong><span>secrets shared</span></div>
@@ -110,7 +110,7 @@ export default function Directory({
 
         <section className="how-strip" aria-label="How BotMRR works">
           <div><span>01</span><p><strong>Pick an outcome</strong>Browse work, not model jargon.</p></div>
-          <div><span>02</span><p><strong>Install the package</strong>Bots, rooms, routines, and playbooks.</p></div>
+          <div><span>02</span><p><strong>Hand over the Markdown</strong>Your Chief of Staff spawns and coordinates the team.</p></div>
           <div><span>03</span><p><strong>Connect and run</strong>Your permissions stay in your hands.</p></div>
         </section>
 
@@ -120,7 +120,7 @@ export default function Directory({
               <span className="section-kicker">THE DIRECTORY</span>
               <h2>Ready-to-run outcomes</h2>
             </div>
-            <p>{visible.length} {visible.length === 1 ? "package" : "packages"}</p>
+            <p>{visible.length} {visible.length === 1 ? "playbook" : "playbooks"}</p>
           </div>
 
           <div className="package-grid">
@@ -168,8 +168,8 @@ export default function Directory({
           {visible.length === 0 && (
             <div className="empty-directory">
               <div className="empty-mark">?</div>
-              <h3>No package matches that yet.</h3>
-              <p>BotMRR is community-built. The missing outcome might be the next useful package.</p>
+              <h3>No playbook matches that yet.</h3>
+              <p>BotMRR is community-built. The missing outcome might be the next useful playbook.</p>
               <Link href="/publish">Publish it <ArrowUpRight size={14} /></Link>
             </div>
           )}
@@ -179,9 +179,9 @@ export default function Directory({
           <div>
             <span className="section-kicker">BUILD THE SUPPLY</span>
             <h2>Made something useful?</h2>
-            <p>Package the bots already working for you. One readable file, one pull request, one install button for everyone else.</p>
+            <p>Write down the team that already works for you. One Markdown file, one pull request, usable in every agent product.</p>
           </div>
-          <Link href="/publish" className="button button-light">Publish a package <ArrowUpRight size={15} /></Link>
+          <Link href="/publish" className="button button-light">Publish a playbook <ArrowUpRight size={15} /></Link>
         </section>
       </main>
     </>

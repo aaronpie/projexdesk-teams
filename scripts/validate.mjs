@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, normalize, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse as parseYaml } from "yaml";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
@@ -24,6 +25,24 @@ function fail(message) {
 function json(path) {
   try {
     return JSON.parse(readFileSync(join(root, path), "utf8"));
+  } catch (error) {
+    fail(`${path}: ${error.message}`);
+    return null;
+  }
+}
+
+function markdownPackage(path) {
+  try {
+    const markdown = readFileSync(join(root, path), "utf8");
+    const frontmatter = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+    if (!frontmatter) throw new Error("missing YAML frontmatter");
+    const metadata = parseYaml(frontmatter[1]);
+    if (!metadata || metadata.botmrr !== 1) throw new Error("expected BotMRR Markdown v1");
+    for (const heading of ["Activation", "Mission", "Outcomes", "Connections", "Team", "Chief of Staff", "Completion rule"]) {
+      if (!markdown.includes(`## ${heading}`)) throw new Error(`missing readable ${heading} section`);
+    }
+    const { botmrr: _format, ...pkg } = metadata;
+    return pkg;
   } catch (error) {
     fail(`${path}: ${error.message}`);
     return null;
@@ -82,13 +101,8 @@ function list(value, max) {
 }
 
 function validatePackage(path, slug, expectedMembers) {
-  const document = json(path);
-  if (!document) return;
-  if (document.format !== "openmaus.package" || document.version !== 1) {
-    fail(`${path}: expected openmaus.package version 1`);
-    return;
-  }
-  const pkg = document.package;
+  const pkg = markdownPackage(path);
+  if (!pkg) return;
   if (!pkg || pkg.id !== slug || !text(pkg.name, 100) || !text(pkg.tagline, 160) || !text(pkg.summary, 2000)) {
     fail(`${path}: package identity and listing metadata are invalid`);
     return;
@@ -209,7 +223,7 @@ if (!catalog || catalog.format !== "openmaus.catalog" || catalog.version !== 1 |
     if (!text(team.name, 100) || !text(team.summary, 300)) fail(`catalog.json: ${team.slug} needs a name and summary`);
     if (!safeFile(team.manifest, ".mausteam.json")) fail(`catalog.json: missing manifest for ${team.slug}`);
     else validateManifest(team.manifest, team.members);
-    if (!safeFile(team.package, ".mauspack.json")) fail(`catalog.json: missing package for ${team.slug}`);
+    if (!safeFile(team.package, ".md")) fail(`catalog.json: missing Markdown playbook for ${team.slug}`);
     else if (!team.package.startsWith("packages/")) fail(`catalog.json: package must stay inside packages/`);
     else validatePackage(team.package, team.slug, team.members);
     if (!safeFile(team.readme, "README.md")) fail(`catalog.json: missing README for ${team.slug}`);
@@ -229,7 +243,7 @@ if (!catalog || catalog.format !== "openmaus.catalog" || catalog.version !== 1 |
 
   const listedPackages = new Set(catalog.teams.map((team) => team.package));
   const packageFiles = readdirSync(join(root, "packages"))
-    .filter((name) => name.endsWith(".mauspack.json"))
+    .filter((name) => name.endsWith(".md"))
     .map((name) => `packages/${name}`);
   for (const packageFile of packageFiles) {
     if (!listedPackages.has(packageFile)) fail(`${packageFile}: package is missing from catalog.json`);

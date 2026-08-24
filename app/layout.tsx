@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     template: "%s · BotMRR",
   },
   description:
-    "Discover complete OpenMausBot packages. Pick an outcome, install the bots, connect your apps, and turn the work on.",
+    "Discover portable AI team playbooks. Give one Markdown file to your Chief of Staff, connect your apps, and run it anywhere.",
   openGraph: {
     title: "BotMRR — Bots that do the work",
-    description: "Pick an outcome. Install the team. Connect your apps. Turn it on.",
+    description: "Pick an outcome. Give the Markdown to your Chief of Staff. Run it anywhere.",
     type: "website",
     siteName: "BotMRR",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "BotMRR — Bots that do the work." }],
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "BotMRR — Bots that do the work",
-    description: "Pick an outcome. Install the team. Connect your apps. Turn it on.",
+    description: "Pick an outcome. Give the Markdown to your Chief of Staff. Run it anywhere.",
     images: ["/og.png"],
   },
 };

@@ -43,8 +43,8 @@ export default async function PackagePage({ params }: Props) {
             <p>{entry.tagline}</p>
             <div className="detail-actions">
               <InstallButton installUrl={packageInstallUrl(entry.id)} />
-              <a className="button button-secondary" href={packageRawUrl(entry.id)} download>
-                Download package
+              <a className="button button-secondary" href={packageRawUrl(entry.id)} target="_blank" rel="noreferrer">
+                Open / copy Markdown ↗
               </a>
             </div>
             <div className="detail-trust"><span>Open source</span><span>MIT licensed</span><span>No credentials included</span></div>
@@ -63,7 +63,7 @@ export default async function PackagePage({ params }: Props) {
           <div className="detail-content">
             <section className="content-section">
               <span className="section-kicker">WHAT IT DOES</span>
-              <h2>A complete operating setup, not a prompt.</h2>
+              <h2>A complete team blueprint in one Markdown file.</h2>
               <p className="long-copy">{entry.summary}</p>
               <div className="outcome-panels">
                 {entry.outcomes.map((outcome, index) => (
@@ -161,17 +161,17 @@ export default async function PackagePage({ params }: Props) {
               </section>
             )}
             <section>
-              <h2>Package details</h2>
+              <h2>Playbook details</h2>
               <dl className="package-details">
                 <div><dt>Version</dt><dd>{entry.release}</dd></div>
                 <div><dt>Author</dt><dd>{entry.author.name}</dd></div>
                 <div><dt>License</dt><dd>{entry.license}</dd></div>
-                <div><dt>Format</dt><dd>openmaus.package v1</dd></div>
+                <div><dt>Format</dt><dd>BotMRR Markdown v1</dd></div>
               </dl>
             </section>
             <section className="safety-note">
               <span aria-hidden="true">✓</span>
-              <div><h2>Your access stays yours.</h2><p>Packages never include credentials, approval grants, conversations, memory, or private folders. You review every connection before a bot can use it.</p></div>
+              <div><h2>Your access stays yours.</h2><p>Playbooks never include credentials, approval grants, conversations, memory, or private folders. You review every connection before a bot can use it.</p></div>
             </section>
           </aside>
         </div>

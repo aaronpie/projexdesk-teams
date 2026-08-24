@@ -9,14 +9,14 @@ export default function Footer() {
             <img src="/app-icon.png" width="32" height="32" alt="" />
             <span>BotMRR</span>
           </div>
-          <p>Useful bots, complete teams, and repeatable work—built for OpenMausBot.</p>
+          <p>Useful bots, complete teams, and repeatable work in portable Markdown.</p>
         </div>
         <div>
           <h2>Marketplace</h2>
           <Link href="/#directory">Browse bots</Link>
-          <Link href="/publish">Publish a package</Link>
+          <Link href="/publish">Publish a playbook</Link>
           <a href="https://github.com/milind-soni/openmausbot-teams" target="_blank" rel="noreferrer">
-            Package source
+            Playbook source
           </a>
         </div>
         <div>
@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <span>Open packages. Local runtime. Your accounts stay yours.</span>
+        <span>Open Markdown. Any agent runtime. Your accounts stay yours.</span>
         <span>© {new Date().getFullYear()} OpenMausBot</span>
       </div>
       <div className="footer-ghost" aria-hidden="true">BOTMRR</div>

@@ -2,6 +2,7 @@ import "server-only";
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { parse as parseYaml } from "yaml";
 
 export type MausColor =
   | "green"
@@ -74,24 +75,24 @@ export interface BotPackage {
   examples?: Array<{ title: string; input: string; output: string }>;
 }
 
-interface PackageDocument {
-  format: "openmaus.package";
-  version: 1;
-  package: BotPackage;
-}
-
 const packageDirectory = join(process.cwd(), "packages");
+
+function parsePackageMarkdown(name: string, markdown: string): BotPackage {
+  const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  if (!match) throw new Error(`${name} is missing YAML frontmatter`);
+  const metadata = parseYaml(match[1]) as Record<string, unknown>;
+  if (metadata.botmrr !== 1) throw new Error(`${name} is not a supported BotMRR playbook`);
+  if (!markdown.includes("## Activation") || !markdown.includes("## Team")) {
+    throw new Error(`${name} is missing its readable activation instructions`);
+  }
+  const { botmrr: _format, ...definition } = metadata;
+  return definition as unknown as BotPackage;
+}
 
 export function getPackages(): BotPackage[] {
   return readdirSync(packageDirectory)
-    .filter((name) => name.endsWith(".mauspack.json"))
-    .map((name) => {
-      const document = JSON.parse(readFileSync(join(packageDirectory, name), "utf8")) as PackageDocument;
-      if (document.format !== "openmaus.package" || document.version !== 1) {
-        throw new Error(`${name} is not a supported OpenMausBot package`);
-      }
-      return document.package;
-    })
+    .filter((name) => name.endsWith(".md"))
+    .map((name) => parsePackageMarkdown(name, readFileSync(join(packageDirectory, name), "utf8")))
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || a.name.localeCompare(b.name));
 }
 
@@ -100,7 +101,7 @@ export function getPackage(id: string): BotPackage | undefined {
 }
 
 export function packageRawUrl(id: string): string {
-  return `https://raw.githubusercontent.com/milind-soni/openmausbot-teams/main/packages/${id}.mauspack.json`;
+  return `https://raw.githubusercontent.com/milind-soni/openmausbot-teams/main/packages/${id}.md`;
 }
 
 export function packageInstallUrl(id: string): string {

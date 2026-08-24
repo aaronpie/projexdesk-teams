@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Publish a package",
-  description: "Turn a useful OpenMausBot setup into one readable, installable package.",
+  title: "Publish a playbook",
+  description: "Turn a useful AI team into one portable Markdown playbook.",
 };
 
 const steps = [
-  ["01", "Package the outcome", "Use one .mauspack.json file for the listing, bots, Chief of Staff, rooms, paused routines, connector requirements, playbooks, and example output."],
-  ["02", "Validate it", "Run the repository validator. It checks references, limits, schedules, and the safety boundary before a package can enter the directory."],
-  ["03", "Open a pull request", "The community can review every instruction in plain text. Once merged, the package appears on BotMRR and becomes installable in OpenMausBot."],
+  ["01", "Write the outcome", "Use one normal .md file for the mission, specialist roles, Chief of Staff, shared rooms, paused routines, connections, playbooks, and example output."],
+  ["02", "Give it to a Chief", "The body must stand on its own in Grok, Claude, ChatGPT, OpenMausBot, or any product that can coordinate agents."],
+  ["03", "Open a pull request", "The community reviews the whole operating playbook in plain text. Once merged, it appears on BotMRR for everyone."],
 ];
 
 export default function PublishPage() {
@@ -20,7 +20,7 @@ export default function PublishPage() {
         <p>One outcome. One readable file. One install button. No private data attached.</p>
         <div className="detail-actions">
           <a className="button button-primary" href="https://github.com/milind-soni/openmausbot-teams/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">Contribution guide ↗</a>
-          <a className="button button-secondary" href="https://github.com/milind-soni/openmausbot-teams/tree/main/packages" target="_blank" rel="noreferrer">Browse package files</a>
+          <a className="button button-secondary" href="https://github.com/milind-soni/openmausbot-teams/tree/main/packages" target="_blank" rel="noreferrer">Browse Markdown files</a>
         </div>
       </section>
       <section className="publish-steps">
@@ -32,17 +32,18 @@ export default function PublishPage() {
         <div>
           <span className="section-kicker">THE FORMAT</span>
           <h2>Everything needed to understand and run it.</h2>
-          <p>BotMRR packages are intentionally boring JSON. They are easy to review, diff, fork, generate, and install.</p>
+          <p>The entire product is one Markdown file: readable by people, pasteable into any agent product, and structured enough for one-click import where supported.</p>
         </div>
-        <pre><code>{`openmaus.package
-├── listing + outcomes
-├── requirements
-├── agents
-├── chiefOfStaff
-├── rooms
+        <pre><code>{`team.md
+├── activation
+├── mission + outcomes
+├── connections
+├── specialist roles
+├── Chief of Staff
+├── shared rooms
 ├── routines (paused)
 ├── playbooks
-└── examples`}</code></pre>
+└── completion rule`}</code></pre>
       </section>
       <section className="never-package">
         <span className="section-kicker">NEVER PACKAGED</span>

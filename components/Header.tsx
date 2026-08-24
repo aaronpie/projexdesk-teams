@@ -26,7 +26,7 @@ export default function Header() {
             target="_blank"
             rel="noreferrer"
             className="github-link"
-            aria-label="BotMRR packages on GitHub"
+            aria-label="BotMRR playbooks on GitHub"
           >
             <GitHubMark />
           </a>
