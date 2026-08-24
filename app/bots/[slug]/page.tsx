@@ -50,7 +50,7 @@ export default async function PackagePage({ params }: Props) {
             <div className="detail-trust"><span>Open source</span><span>MIT licensed</span><span>No credentials included</span></div>
           </div>
           <aside className="install-summary">
-            <div className="summary-label">INSTALLS</div>
+            <div className="summary-label">INCLUDED</div>
             <div className="summary-stat"><strong>{entry.agents.length}</strong><span>specialist bots</span></div>
             <div className="summary-stat"><strong>{entry.rooms?.length ?? 0}</strong><span>shared room</span></div>
             <div className="summary-stat"><strong>{entry.playbooks?.length ?? 0}</strong><span>playbooks</span></div>
@@ -129,7 +129,7 @@ export default async function PackagePage({ params }: Props) {
                 {entry.examples?.map((example) => (
                   <div className="example-card" key={example.title}>
                     <div><span>YOU</span><p>{example.input}</p></div>
-                    <div><span>PACKAGE</span><p>{example.output}</p></div>
+                    <div><span>PLAYBOOK</span><p>{example.output}</p></div>
                   </div>
                 ))}
               </section>
@@ -155,7 +155,7 @@ export default async function PackagePage({ params }: Props) {
                     <p>{routine.schedule.type === "daily"
                       ? `${routine.schedule.weekdays.map((day) => WEEKDAYS[day]).join(", ")} · ${routine.schedule.time}`
                       : "One time"}</p>
-                    <span>Installed paused</span>
+                    <span>Starts paused</span>
                   </div>
                 ))}
               </section>
