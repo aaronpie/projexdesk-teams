@@ -2,23 +2,15 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  ArrowUpRight,
-  BookOpen,
-  Bot,
-  CalendarClock,
-  Clock3,
-  MessageSquare,
-  Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
-import ConnectorIcon from "@/components/ConnectorIcon";
 import type { BotPackage } from "@/lib/packages";
+import { proofHeadline, proofValue } from "@/lib/proof";
 
 function Roster({ entry }: { entry: BotPackage }) {
   return (
     <div className="mini-roster" aria-label={`${entry.agents.length} included bots`}>
-      {entry.agents.slice(0, 6).map((agent, index) => (
+      {entry.agents.slice(0, 4).map((agent, index) => (
         <span
           key={agent.key}
           className="mini-maus"
@@ -29,6 +21,13 @@ function Roster({ entry }: { entry: BotPackage }) {
       ))}
     </div>
   );
+}
+
+function claimedTotal(packages: BotPackage[]): string {
+  const total = packages.reduce((sum, entry) => sum + proofValue(entry), 0);
+  if (total >= 1_000_000) return `$${(total / 1_000_000).toFixed(1)}M`;
+  if (total >= 1_000) return `$${Math.round(total / 1_000)}K`;
+  return `$${Math.round(total)}`;
 }
 
 export default function Directory({
@@ -52,6 +51,7 @@ export default function Directory({
           entry.tagline,
           entry.summary,
           entry.category,
+          entry.proof?.source.author ?? "",
           ...(entry.tags ?? []),
           ...entry.outcomes,
           ...entry.agents.flatMap((agent) => [agent.name, agent.title]),
@@ -73,9 +73,9 @@ export default function Directory({
       <main>
         <section className="hero-shell">
           <div className="eyebrow"><span /> OPEN-SOURCE BOT MARKETPLACE</div>
-          <h1>Bots that do the work.</h1>
+          <h1>Bots that make money.</h1>
           <p className="hero-copy">
-            Pick an outcome. Give one Markdown file to your Chief of Staff. Run it in any agent product.
+            Real playbooks behind public revenue claims. Pick one, hand the Markdown to your Chief of Staff, run it in any agent product.
           </p>
           <label className="hero-search">
             <Search aria-hidden="true" size={21} strokeWidth={1.8} />
@@ -83,7 +83,7 @@ export default function Directory({
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="What should a bot do for you?"
+              placeholder="What should a bot earn for you?"
               aria-label="Search BotMRR playbooks"
             />
             <kbd>/</kbd>
@@ -101,76 +101,70 @@ export default function Directory({
             ))}
           </nav>
           <div className="hero-proof">
+            <div><strong>{claimedTotal(packages)}</strong><span>claimed by creators</span></div>
             <div><strong>{stats.packages}</strong><span>portable playbooks</span></div>
             <div><strong>{stats.agents}</strong><span>specialist bots</span></div>
-            <div><strong>{stats.playbooks}</strong><span>embedded playbooks</span></div>
             <div><strong>0</strong><span>secrets shared</span></div>
           </div>
-        </section>
-
-        <section className="how-strip" aria-label="How BotMRR works">
-          <div><span>01</span><p><strong>Pick an outcome</strong>Browse work, not model jargon.</p></div>
-          <div><span>02</span><p><strong>Hand over the Markdown</strong>Your Chief of Staff spawns and coordinates the team.</p></div>
-          <div><span>03</span><p><strong>Connect and run</strong>Your permissions stay in your hands.</p></div>
         </section>
 
         <section className="directory-section" id="directory">
           <div className="directory-head">
             <div>
-              <span className="section-kicker">THE DIRECTORY</span>
-              <h2>Ready-to-run outcomes</h2>
+              <span className="section-kicker">THE BOARD</span>
+              <h2>Playbooks, ranked by what their creators say they made.</h2>
             </div>
             <p>{visible.length} {visible.length === 1 ? "playbook" : "playbooks"}</p>
           </div>
 
-          <div className="package-grid">
+          <div className="board" role="table" aria-label="BotMRR playbook board">
+            <div className="board-head" role="row">
+              <span className="board-rank">#</span>
+              <span className="board-main">Playbook</span>
+              <span className="board-cat">Category</span>
+              <span className="board-bots">Bots</span>
+              <span className="board-money">Money made</span>
+            </div>
             {visible.map((entry, index) => (
-              <Link href={`/bots/${entry.id}`} className="package-card" key={entry.id}>
-                <div className="card-topline">
-                  <span className="card-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="category-label">{entry.category}</span>
-                  {entry.featured && <span className="featured-label">Featured</span>}
-                </div>
-                <div className="card-title-row">
+              <Link href={`/bots/${entry.id}`} className="board-row" key={entry.id} role="row">
+                <span className="board-rank">{index + 1}</span>
+                <span className="board-main">
                   <Roster entry={entry} />
-                  <span className="card-arrow"><ArrowUpRight size={16} strokeWidth={1.8} /></span>
-                </div>
-                <h3>{entry.name}</h3>
-                <p className="card-tagline">{entry.tagline}</p>
-                <ul className="outcome-list">
-                  {entry.outcomes.slice(0, 1).map((outcome) => <li key={outcome}>{outcome}</li>)}
-                </ul>
-                <div className="card-connectors">
-                  <span className="card-connectors-label">Connects</span>
-                  <div>
-                    {entry.requirements.apps.length === 0 ? (
-                      <span className="connector-none">No apps required</span>
-                    ) : entry.requirements.apps.slice(0, 4).map((app) => (
-                      <span className="connector-chip" key={app.slug}>
-                        <ConnectorIcon slug={app.slug} label={app.label} size="small" />
-                        <span>{app.label}</span>
-                        {app.optional && <em>Optional</em>}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="card-meta">
-                  <span title="Bots"><Bot size={13} />{entry.agents.length}</span>
-                  <span title="Shared rooms"><MessageSquare size={13} />{entry.rooms?.length ?? 0}</span>
-                  <span title="Playbooks"><BookOpen size={13} />{entry.playbooks?.length ?? 0}</span>
-                  <span title="Suggested schedules"><CalendarClock size={13} />{entry.routines?.length ?? 0}</span>
-                  <span title="Estimated setup time"><Clock3 size={13} />~{entry.setupMinutes} min</span>
-                </div>
+                  <span className="board-name">
+                    <strong>{entry.name}</strong>
+                    <em>{entry.tagline}</em>
+                  </span>
+                </span>
+                <span className="board-cat">{entry.category}</span>
+                <span className="board-bots">{entry.agents.length}</span>
+                <span className="board-money">
+                  {entry.proof ? (
+                    <>
+                      <strong>{proofHeadline(entry.proof)}</strong>
+                      <em>
+                        {entry.proof.credibility === "receipts" ? "receipts · " : "claimed · "}
+                        {entry.proof.source.author}
+                      </em>
+                    </>
+                  ) : (
+                    <span className="board-money-none">—</span>
+                  )}
+                </span>
               </Link>
             ))}
           </div>
+
+          <p className="board-note">
+            Figures are each creator&apos;s own public claim, linked from the playbook page. BotMRR verifies the
+            post exists — never the revenue.
+          </p>
 
           {visible.length === 0 && (
             <div className="empty-directory">
               <div className="empty-mark">?</div>
               <h3>No playbook matches that yet.</h3>
               <p>BotMRR is community-built. The missing outcome might be the next useful playbook.</p>
-              <Link href="/publish">Publish it <ArrowUpRight size={14} /></Link>
+              <Link href="/publish">Publish it</Link>
             </div>
           )}
         </section>
@@ -178,10 +172,10 @@ export default function Directory({
         <section className="creator-callout">
           <div>
             <span className="section-kicker">BUILD THE SUPPLY</span>
-            <h2>Made something useful?</h2>
-            <p>Write down the team that already works for you. One Markdown file, one pull request, usable in every agent product.</p>
+            <h2>Made money with a bot?</h2>
+            <p>Write down the team that already earns for you. One Markdown file, one pull request, a linked receipt, usable in every agent product.</p>
           </div>
-          <Link href="/publish" className="button button-light">Publish a playbook <ArrowUpRight size={15} /></Link>
+          <Link href="/publish" className="button button-light">Publish a playbook</Link>
         </section>
       </main>
     </>
