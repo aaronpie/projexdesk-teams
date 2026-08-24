@@ -1,37 +1,39 @@
-# OpenMausBot Teams
+# BotMRR packages
 
-Community-maintained team templates for [OpenMausBot](https://github.com/milind-soni/OpenMausBot).
+The open-source package registry behind [BotMRR](https://botmrr.io) and [OpenMausBot](https://github.com/milind-soni/OpenMausBot).
 
-Each team is a small, readable package of bot roles and optional Markdown skill playbooks. Team files never contain conversations, credentials, permissions, provider sessions, or computer access.
+Each `.mauspack.json` is one readable, portable file containing the listing, bots, Chief of Staff, shared rooms, playbooks, connector requirements, examples, and suggested routines for one outcome. It never contains conversations, credentials, approval grants, provider sessions, memory, or private computer paths.
 
 ## Available teams
 
-| Team | What it is for | Members | Download |
+| Package | Outcome | Bots | Install file |
 | --- | --- | ---: | --- |
-| [SEO Growth Team](teams/seo-growth) | Search strategy, keyword research, technical SEO, and content briefs | 4 | [Team file](teams/seo-growth/team.mausteam.json) |
-| [Engineering Team](teams/engineering) | Planning, implementation, review, testing, and releases | 4 | [Team file](teams/engineering/team.mausteam.json) |
-| [100x Marketing Team](teams/100x-marketing) | Positioning, campaigns, distribution, and growth experiments | 4 | [Team file](teams/100x-marketing/team.mausteam.json) |
+| [SEO Growth Team](teams/seo-growth) | Prioritize search work most likely to grow qualified traffic | 4 | [Package](packages/seo-growth.mauspack.json) |
+| [Engineering Team](teams/engineering) | Take a software change from intent to a verified release | 4 | [Package](packages/engineering.mauspack.json) |
+| [100x Marketing Team](teams/100x-marketing) | Launch a focused campaign and make a stop-or-scale decision | 4 | [Package](packages/100x-marketing.mauspack.json) |
+| [Reddit Lead Miner](teams/reddit-lead-miner) | Find qualified Reddit leads with source evidence | 2 | [Package](packages/reddit-lead-miner.mauspack.json) |
+| [Competitor Watch](teams/competitor-watch) | Turn material competitor changes into a decision brief | 2 | [Package](packages/competitor-watch.mauspack.json) |
+| [Inbox Follow-up](teams/inbox-follow-up) | Recover sales conversations where your team owes the next step | 2 | [Package](packages/inbox-follow-up.mauspack.json) |
 
-## Install a team
+## Install a package
 
-1. Open a team folder above and download its `team.mausteam.json` file.
-2. In OpenMausBot, click the **+** button and choose **Import Team**.
-3. Review the members, then import it.
+Browse [botmrr.io](https://botmrr.io), choose an outcome, and click **Add to OpenMausBot**. You can also download the package JSON and import it manually.
 
-The JSON manifests use OpenMausBot's current `openmaus.team` version 1 format, so their bot roles can be imported today. The adjacent `skills/` folders are deliberately plain Markdown and ready for the upcoming in-app Team Library. Compatible app versions can preview and install them; older versions safely ignore them.
+Suggested routines always install paused. Connected apps are reviewed and authorized inside OpenMausBot after import.
 
 ## How this repository works
 
 - [`catalog.json`](catalog.json) is the machine-readable index the app can load.
-- Every team lives in its own folder with a manifest, README, and reviewable skills.
-- [`schema/team.schema.json`](schema/team.schema.json) documents the portable team format.
-- Pull requests run a dependency-free validator that checks manifests and referenced files.
+- [`packages/`](packages) contains the canonical one-file packages used by BotMRR and current OpenMausBot versions.
+- [`schema/package.schema.json`](schema/package.schema.json) documents the complete portable format.
+- [`teams/`](teams) contains legacy manifests and plain Markdown views for older app versions and human review.
+- Pull requests validate every package, cross-reference, compatibility manifest, and referenced file, then build the directory.
 
 ## Contributing
 
-Community teams are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), copy one of the existing team folders, and open a pull request.
+Community packages are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), copy one of the existing package files, and open a pull request.
 
-Skills are instructions that can influence an agent's behavior. Read them before installing a team. This repository does not accept secrets, binaries, generated bundles, or executable skill scripts.
+Playbooks are instructions that can influence a bot's behavior. Read them before installing a package. This repository does not accept secrets, generated bundles, or executable playbook scripts.
 
 ## License
 
