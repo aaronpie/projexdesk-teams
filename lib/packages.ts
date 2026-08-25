@@ -120,6 +120,16 @@ export function getPackage(id: string): BotPackage | undefined {
   return getPackages().find((entry) => entry.id === id);
 }
 
+/** The playbook exactly as it lives on disk — what people copy and paste. */
+export function getPackageMarkdown(id: string): string | undefined {
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) return undefined;
+  try {
+    return readFileSync(join(packageDirectory, `${id}.md`), "utf8");
+  } catch {
+    return undefined;
+  }
+}
+
 export function packageRawUrl(id: string): string {
   return `https://raw.githubusercontent.com/milind-soni/openmausbot-teams/main/packages/${id}.md`;
 }

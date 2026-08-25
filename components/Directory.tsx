@@ -7,22 +7,6 @@ import { Search } from "lucide-react";
 import type { BotPackage } from "@/lib/packages";
 import { proofHeadline, proofValue } from "@/lib/proof";
 
-function Roster({ entry }: { entry: BotPackage }) {
-  return (
-    <div className="mini-roster" aria-label={`${entry.agents.length} included bots`}>
-      {entry.agents.slice(0, 4).map((agent, index) => (
-        <span
-          key={agent.key}
-          className="mini-maus"
-          data-color={agent.appearance.color}
-          title={`${agent.name} — ${agent.title}`}
-          style={{ zIndex: entry.agents.length - index }}
-        />
-      ))}
-    </div>
-  );
-}
-
 function claimedTotal(packages: BotPackage[]): string {
   const total = packages.reduce((sum, entry) => sum + proofValue(entry), 0);
   if (total >= 1_000_000) return `$${(total / 1_000_000).toFixed(1)}M`;
@@ -72,10 +56,13 @@ export default function Directory({
     <>
       <main>
         <section className="hero-shell">
-          <div className="eyebrow"><span /> OPEN-SOURCE BOT MARKETPLACE</div>
+          <div className="hero-brand">
+            <img src="/app-icon.png" alt="" width={26} height={26} />
+            <strong>BotMRR</strong>
+          </div>
           <h1>Bots that make money.</h1>
           <p className="hero-copy">
-            Real playbooks behind public revenue claims. Pick one, hand the Markdown to your Chief of Staff, run it in any agent product.
+            Real playbooks behind public revenue claims, each one Markdown file any agent product can run.
           </p>
           <label className="hero-search">
             <Search aria-hidden="true" size={21} strokeWidth={1.8} />
@@ -88,6 +75,13 @@ export default function Directory({
             />
             <kbd>/</kbd>
           </label>
+          <nav className="hero-links" aria-label="Site">
+            <Link href="/publish">Publish</Link>
+            <span>&middot;</span>
+            <a href="https://github.com/milind-soni/openmausbot-teams" target="_blank" rel="noreferrer">GitHub</a>
+            <span>&middot;</span>
+            <a href="https://github.com/milind-soni/OpenMausBot" target="_blank" rel="noreferrer">OpenMausBot</a>
+          </nav>
           <nav className="category-chips" aria-label="Browse by outcome">
             {categories.map((item) => (
               <button
@@ -109,15 +103,11 @@ export default function Directory({
         </section>
 
         <section className="directory-section" id="directory">
-          <div className="directory-head">
-            <div>
-              <span className="section-kicker">THE BOARD</span>
-              <h2>Playbooks, ranked by what their creators say they made.</h2>
-            </div>
-            <p>{visible.length} {visible.length === 1 ? "playbook" : "playbooks"}</p>
-          </div>
-
           <div className="board" role="table" aria-label="BotMRR playbook board">
+            <div className="board-title-row">
+              <h2>Leaderboard</h2>
+              <span>{visible.length} {visible.length === 1 ? "playbook" : "playbooks"} &middot; every figure links its source</span>
+            </div>
             <div className="board-head" role="row">
               <span className="board-rank">#</span>
               <span className="board-main">Playbook</span>
@@ -127,9 +117,8 @@ export default function Directory({
             </div>
             {visible.map((entry, index) => (
               <Link href={`/bots/${entry.id}`} className="board-row" key={entry.id} role="row">
-                <span className="board-rank">{index + 1}</span>
+                <span className="board-rank">{index === 0 ? "\u{1F947}" : index === 1 ? "\u{1F948}" : index === 2 ? "\u{1F949}" : index + 1}</span>
                 <span className="board-main">
-                  <Roster entry={entry} />
                   <span className="board-name">
                     <strong>{entry.name}</strong>
                     <em>{entry.tagline}</em>
@@ -155,8 +144,7 @@ export default function Directory({
           </div>
 
           <p className="board-note">
-            Figures are each creator&apos;s own public claim, linked from the playbook page. BotMRR verifies the
-            post exists — never the revenue.
+            Figures are each creator&apos;s own public claim. BotMRR verifies the post exists &mdash; never the revenue.
           </p>
 
           {visible.length === 0 && (
