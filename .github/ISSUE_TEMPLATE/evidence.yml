@@ -1,0 +1,98 @@
+name: Suggest a public bot outcome
+description: Suggest a public Grok Bot source, template, or outcome claim for research.
+title: "Source: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This public issue creates a research lead only. It does not earn a verified badge. Link public sources; do not attach credentials, customer information, private emails, exports, contracts, transaction IDs, or screenshots containing private data.
+  - type: input
+    id: publisher
+    attributes:
+      label: Named publisher
+      description: Who published the original post? Include the public handle when available.
+      placeholder: Alex Example (@alexexample)
+    validations:
+      required: true
+  - type: input
+    id: grok_share_url
+    attributes:
+      label: Submitted Grok Bot share URL
+      description: Use the public x.ai/bot/... link if one was shared. A share link does not establish original authorship.
+      placeholder: https://x.ai/bot/...
+  - type: input
+    id: source_url
+    attributes:
+      label: Original public post or article
+      description: Link the named publisher's own source, not a roundup that retells it.
+      placeholder: https://x.com/publisher/status/...
+    validations:
+      required: true
+  - type: dropdown
+    id: claim_type
+    attributes:
+      label: What is being claimed?
+      options:
+        - Gross sales
+        - Net collected revenue
+        - Payout earnings
+        - MRR
+        - Signed or booked deal value
+        - Profit
+        - Cost savings
+        - Recovered cash
+        - Non-cash credit
+        - Trading performance
+        - Account balance
+        - Non-financial outcome
+    validations:
+      required: true
+  - type: textarea
+    id: amount_period
+    attributes:
+      label: Exact amount, currency, and period
+      description: Transcribe only what the public source states. Include dates, timezone, fees, refunds, and taxes when the source provides them; say "not stated" when it does not.
+      placeholder: USD 4,200 net collected from 1–31 Aug 2026; refunds and fees not stated.
+    validations:
+      required: true
+  - type: textarea
+    id: bot_role
+    attributes:
+      label: What did the Bot actually do?
+      description: Separate the Bot's work from the human's work and any other channel that contributed.
+    validations:
+      required: true
+  - type: input
+    id: supporting_url
+    attributes:
+      label: Optional public supporting link
+      description: A public ledger, follow-up post, template reply, correction, or visible challenge. Do not upload private files.
+      placeholder: https://...
+  - type: textarea
+    id: gaps
+    attributes:
+      label: Known gaps or contrary evidence
+      description: Say what the public material does not establish and link any visible public challenge or correction.
+    validations:
+      required: true
+  - type: dropdown
+    id: relationship
+    attributes:
+      label: Your relationship to this source
+      options:
+        - I am the named publisher
+        - I am authorized by the publisher
+        - I am suggesting a public source for research
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Public-source confirmations
+      options:
+        - label: I understand this is a research suggestion, not a verified outcome or endorsement.
+          required: true
+        - label: I linked public material only and did not attach private financial evidence.
+          required: true
+        - label: I did not include secrets, customer data, personal information, or private identifiers.
+          required: true

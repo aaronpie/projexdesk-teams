@@ -16,17 +16,16 @@ export default function Header() {
           <span className="brand-by">by OpenMausBot</span>
         </Link>
         <div className="header-links">
-          <Link href="/#directory">Browse</Link>
-          <Link href="/publish">Publish</Link>
-          <a href="https://openmausbot.com" target="_blank" rel="noreferrer">
-            OpenMausBot
-          </a>
+          <Link href="/#evidence">Evidence</Link>
+          <Link href="/#field-notes">Field notes</Link>
+          <Link href="/methodology">Method</Link>
+          <Link href="/publish">Suggest source</Link>
           <a
             href="https://github.com/milind-soni/openmausbot-teams"
             target="_blank"
             rel="noreferrer"
             className="github-link"
-            aria-label="BotMRR playbooks on GitHub"
+            aria-label="BotMRR source on GitHub"
           >
             <GitHubMark />
           </a>
