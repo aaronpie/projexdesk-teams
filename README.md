@@ -1,12 +1,24 @@
-# BotMRR playbooks
+# BotMRR
 
-The open-source directory of portable AI teams behind [BotMRR](https://botmrr.io).
+[BotMRR](https://botmrr.io) is an independent, open-source evidence ledger for the bot economy. It records public bot templates, source-backed outcome claims, and the gaps between what a creator reports and what the available evidence supports.
 
-Every team is one ordinary Markdown file. Give it to the Chief of Staff in OpenMausBot, Grok, Claude, ChatGPT, or another agent product. The Chief reads the mission, spawns or simulates the specialist roles, coordinates their playbooks, and returns the completed work.
+A public post proves only that a claim was made. A creator-operated dashboard is useful evidence, but it is not a payment-provider connection. BotMRR does not treat either one as verified revenue, and it does not add incomparable claims into a fake total.
 
-The YAML frontmatter gives products an optional reliable import path. The Markdown body is the full, provider-neutral operating playbook. Nothing requires OpenMausBot to understand or run it.
+This repository also publishes portable AI team playbooks inspired by useful public workflows. Each playbook is an independent, safety-reviewed reconstruction—not the creator's exact bot configuration, private prompts, account state, or demonstrated results.
 
-## Available teams
+## Evidence and research
+
+- [`lib/research.ts`](lib/research.ts) contains the curated field notes and public claim reviews shown on the site.
+- [`research/grok-bot-seed-2026-08-29.md`](research/grok-bot-seed-2026-08-29.md) is the reviewed 15-source launch pack and monitoring list.
+- Every case separates what BotMRR observed from what is still missing.
+- Source-only, creator-run-ledger, and publicly challenged records remain visibly distinct.
+- Connected revenue verification is not available yet; the site says so plainly.
+
+## Portable playbooks
+
+Every playbook is one ordinary Markdown file. Give it to a Chief of Staff in OpenMausBot, Grok, Claude, ChatGPT, or another agent product. The YAML frontmatter provides an optional import path, while the Markdown body remains readable and provider-neutral.
+
+The original catalog teams are:
 
 | Playbook | Outcome | Bots | Markdown |
 | --- | --- | ---: | --- |
@@ -17,28 +29,28 @@ The YAML frontmatter gives products an optional reliable import path. The Markdo
 | [Competitor Watch](teams/competitor-watch) | Turn material competitor changes into a decision brief | 2 | [Open](packages/competitor-watch.md) |
 | [Inbox Follow-up](teams/inbox-follow-up) | Recover sales conversations where your team owes the next step | 2 | [Open](packages/inbox-follow-up.md) |
 
-## Use a playbook
+### Use a playbook
 
-1. Browse [botmrr.io](https://botmrr.io) and choose an outcome.
+1. Browse [botmrr.io](https://botmrr.io) and choose an independent workflow.
 2. Download or copy the Markdown.
 3. Give it to your product's Chief of Staff and ask it to activate the team.
 
-OpenMausBot can also install the same Markdown directly, creating the bots, Chief of Staff, rooms, playbooks, connector intent, and paused routines. Other products can simply follow the readable activation instructions.
+OpenMausBot can install the same Markdown directly, creating the bots, Chief of Staff, rooms, playbooks, connector intent, and paused routines. Other products can follow the readable activation instructions.
 
 Suggested routines always start paused. Connections are requirements, never credentials. A playbook never contains conversations, OAuth grants, approvals, memory, provider sessions, local paths, or secrets.
 
 ## Repository structure
 
-- [`packages/`](packages) contains the canonical one-file Markdown playbooks.
+- [`packages/`](packages) contains the independent one-file Markdown playbooks.
 - [`FORMAT.md`](FORMAT.md) documents the small portable convention.
-- [`catalog.json`](catalog.json) is the directory index.
-- [`teams/`](teams) retains compatibility files for older OpenMausBot versions.
+- [`catalog.json`](catalog.json) indexes the original OpenMausBot-compatible teams.
+- [`teams/`](teams) retains their compatibility files for older OpenMausBot versions.
 
-Pull requests validate every playbook, reference, compatibility manifest, and safety boundary, then build the directory.
+Pull requests validate every playbook, compatibility manifest, and safety boundary, then build the site.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md), copy an existing Markdown playbook, and open a pull request. This repository does not accept secrets, generated binary bundles, or executable playbook scripts.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a source, correction, or reconstructed playbook. This repository does not accept secrets, generated binary bundles, or executable playbook scripts.
 
 ## License
 

@@ -4,8 +4,6 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 
-import { proofValue } from "./proof";
-
 export type MausColor =
   | "green"
   | "blue"
@@ -75,9 +73,9 @@ export interface BotPackage {
     instructions: string;
   }>;
   examples?: Array<{ title: string; input: string; output: string }>;
-  /** A public money claim behind this playbook. Always the creator's own
-   * claim, always linked to its source — BotMRR verifies the post exists,
-   * never the revenue. */
+  /** A public claim that informed this independent playbook reconstruction.
+   * The link documents what the source said; it is not connected or verified
+   * revenue, and the playbook is not the creator's exact configuration. */
   proof?: {
     amount: string;
     period: "monthly" | "weekly" | "daily" | "total";
@@ -86,7 +84,7 @@ export interface BotPackage {
   };
 }
 
-export { proofHeadline, proofValue } from "./proof";
+export { proofHeadline } from "./proof";
 
 const packageDirectory = join(process.cwd(), "packages");
 
@@ -108,9 +106,6 @@ export function getPackages(): BotPackage[] {
     .map((name) => parsePackageMarkdown(name, readFileSync(join(packageDirectory, name), "utf8")))
     .sort(
       (a, b) =>
-        // the board reads like a leaderboard: biggest public claim first,
-        // then featured, then name — playbooks without receipts still list
-        proofValue(b) - proofValue(a) ||
         Number(Boolean(b.featured)) - Number(Boolean(a.featured)) ||
         a.name.localeCompare(b.name),
     );

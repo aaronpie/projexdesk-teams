@@ -34,7 +34,7 @@ export default async function PackagePage({ params }: Props) {
   return (
     <main className="detail-page">
       <div className="detail-wrap detail-simple">
-        <div className="breadcrumbs"><Link href="/">Board</Link><span>/</span><span>{entry.category}</span></div>
+        <div className="breadcrumbs"><Link href="/">Evidence ledger</Link><span>/</span><span>{entry.category}</span></div>
 
         <section className="simple-hero">
           <h1>{entry.name}</h1>
@@ -44,7 +44,7 @@ export default async function PackagePage({ params }: Props) {
             <div className="proof-banner">
               <div className="proof-figure">
                 <strong>{proofHeadline(entry.proof)}</strong>
-                <span>{entry.proof.credibility === "receipts" ? "receipts shown" : "creator's claim"}</span>
+                <span>{entry.proof.credibility === "receipts" ? "creator-published evidence" : "public claim"}</span>
               </div>
               <div className="proof-body">
                 {entry.proof.source.quote && <blockquote>&ldquo;{entry.proof.source.quote}&rdquo;</blockquote>}
@@ -55,8 +55,8 @@ export default async function PackagePage({ params }: Props) {
                   {entry.proof.source.date && <span> &middot; {entry.proof.source.date}</span>}
                 </p>
                 <em>
-                  The figure is the creator&apos;s own public claim. BotMRR links the source and verifies the post
-                  exists &mdash; never the revenue.
+                  This source documents what the creator reported. BotMRR has not connected to the underlying
+                  payment, account, or business records.
                 </em>
               </div>
             </div>
@@ -70,8 +70,9 @@ export default async function PackagePage({ params }: Props) {
             </a>
           </div>
           <p className="simple-how">
-            One Markdown file is the whole team. Copy it, paste it to your Chief of Staff in OpenMausBot, Grok,
-            Claude, or ChatGPT, and say &ldquo;activate this team.&rdquo;
+            This is an independent, safety-reviewed reconstruction inspired by the public workflow &mdash; not the
+            creator&apos;s exact bot, private prompts, or results. Copy it to a Chief of Staff in OpenMausBot, Grok,
+            Claude, or ChatGPT and ask it to activate the team.
           </p>
         </section>
 

@@ -9,32 +9,31 @@ export default function Footer() {
             <img src="/app-icon.png" width="32" height="32" alt="" />
             <span>BotMRR</span>
           </div>
-          <p>Useful bots, complete teams, and repeatable work in portable Markdown.</p>
+          <p>An independent evidence ledger for the bot economy. Claims stay claims until the money, bot, and attribution checks say otherwise.</p>
         </div>
         <div>
-          <h2>Marketplace</h2>
-          <Link href="/#directory">Browse bots</Link>
-          <Link href="/publish">Publish a playbook</Link>
+          <h2>Evidence</h2>
+          <Link href="/#evidence">Money claims</Link>
+          <Link href="/#field-notes">Grok Bot field notes</Link>
+          <Link href="/methodology">Methodology</Link>
+          <Link href="/publish">Suggest a source</Link>
+        </div>
+        <div>
+          <h2>Project</h2>
           <a href="https://github.com/milind-soni/openmausbot-teams" target="_blank" rel="noreferrer">
-            Playbook source
+            Open source
           </a>
-        </div>
-        <div>
-          <h2>OpenMausBot</h2>
-          <a href="https://openmausbot.com" target="_blank" rel="noreferrer">
-            Product
+          <a href="https://x.ai/bot" target="_blank" rel="noreferrer">
+            Grok Bot
           </a>
-          <a href="https://github.com/milind-soni/OpenMausBot" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <a href="https://github.com/milind-soni/openmausbot-releases/releases/latest" target="_blank" rel="noreferrer">
-            Download
+          <a href="https://docs.x.ai/grok-bot/bots" target="_blank" rel="noreferrer">
+            Official sharing docs
           </a>
         </div>
       </div>
       <div className="footer-bottom">
-        <span>Open Markdown. Any agent runtime. Your accounts stay yours.</span>
-        <span>© {new Date().getFullYear()} OpenMausBot</span>
+        <span>Independent · not affiliated with xAI · no financial advice</span>
+        <span>© {new Date().getFullYear()} BotMRR</span>
       </div>
       <div className="footer-ghost" aria-hidden="true">BOTMRR</div>
     </footer>
