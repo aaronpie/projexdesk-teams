@@ -1,12 +1,16 @@
-import Link from "next/link";
+"use client";
 
-import type { BotPackage } from "@/lib/packages";
+import { ChevronDown, Search } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
 import {
   claimReviews,
   claimReviewStateLabel,
   fieldNotes,
   researchStats,
   type ClaimReviewState,
+  type EvidenceCheck,
   type EvidenceCheckState,
 } from "@/lib/research";
 
@@ -17,6 +21,9 @@ const reviewedDate = new Intl.DateTimeFormat("en", {
   timeZone: "UTC",
 }).format(new Date(`${researchStats.reviewedAt}T00:00:00Z`));
 
+const claimTypes = Array.from(new Set(claimReviews.map((entry) => entry.claim.type)));
+const noteKinds = Array.from(new Set(fieldNotes.map((entry) => entry.kind)));
+
 function formatPublishedAt(value: string): string {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
@@ -24,6 +31,15 @@ function formatPublishedAt(value: string): string {
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(value));
+}
+
+function formatReviewedAt(value: string): string {
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 
 function statusClass(state: ClaimReviewState): string {
@@ -38,8 +54,79 @@ function checkClass(state: EvidenceCheckState): string {
   return "check-missing";
 }
 
-export default function Directory({ packages }: { packages: BotPackage[] }) {
-  const packageIds = new Set(packages.map((entry) => entry.id));
+function initials(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
+
+function TrustIndicator({ shortLabel, label, check }: { shortLabel: string; label: string; check: EvidenceCheck }) {
+  return (
+    <span
+      className={`trust-dot ${checkClass(check.state)}`}
+      aria-label={`${label}: ${check.label}`}
+      title={`${label}: ${check.label}`}
+    >
+      <span aria-hidden="true">{shortLabel}</span>
+    </span>
+  );
+}
+
+export default function Directory({ packageIds }: { packageIds: string[] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [claimFilter, setClaimFilter] = useState("All");
+  const [noteFilter, setNoteFilter] = useState("All");
+  const packageIdSet = useMemo(() => new Set(packageIds), [packageIds]);
+  const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
+
+  const filteredClaims = useMemo(() => {
+    return claimReviews.filter((entry) => {
+      if (claimFilter !== "All" && entry.claim.type !== claimFilter) return false;
+
+      const haystack = [
+        entry.title,
+        entry.creator,
+        entry.handle,
+        entry.claim.headline,
+        entry.claim.type,
+        claimReviewStateLabel(entry.state),
+        entry.checks.money.label,
+        entry.checks.botControl.label,
+        entry.checks.attribution.label,
+        entry.observed,
+        entry.missing,
+      ]
+        .join(" ")
+        .toLocaleLowerCase();
+
+      return !normalizedSearch || haystack.includes(normalizedSearch);
+    });
+  }, [claimFilter, normalizedSearch]);
+
+  const filteredNotes = useMemo(() => {
+    return fieldNotes.filter((entry) => {
+      if (noteFilter !== "All" && entry.kind !== noteFilter) return false;
+
+      const haystack = [
+        entry.title,
+        entry.summary,
+        entry.kind,
+        entry.topic,
+        entry.source.author,
+        entry.source.handle,
+        entry.template?.name,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase();
+
+      return !normalizedSearch || haystack.includes(normalizedSearch);
+    });
+  }, [noteFilter, normalizedSearch]);
 
   return (
     <main>
@@ -52,258 +139,340 @@ export default function Directory({ packages }: { packages: BotPackage[] }) {
         </a>
       </section>
 
-      <section className="ledger-hero page-shell">
-        <div className="hero-intro">
-          <p className="overline">INDEPENDENT EVIDENCE LEDGER</p>
-          <h1>
-            Receipts for the
-            <span> bot economy.</span>
-          </h1>
-          <p className="hero-lede">
-            Grok&apos;s shared templates show what a bot is meant to do. BotMRR records what people say happened after
-            they ran one &mdash; with money, ownership, and attribution kept as separate questions.
-          </p>
-          <div className="hero-actions">
-            <a className="button button-primary" href="#evidence">
-              Browse the evidence
-            </a>
-            <Link className="button button-secondary" href="/publish">
-              Suggest a source
-            </Link>
-          </div>
-          <p className="independence-note">
-            Independent and open source. Not affiliated with xAI. No financial claims are connected yet.
-          </p>
-        </div>
+      <section className="directory-hero page-shell">
+        <div className="directory-hero-grid">
+          <div className="directory-intro">
+            <p className="overline">SOURCE-CHECKED GROK BOT DIRECTORY</p>
+            <h1>
+              Find the bots.
+              <span> Follow the money.</span>
+            </h1>
+            <p className="hero-lede">
+              A searchable catalog of public Grok Bot workflows and money claims, with the original source and every
+              evidence gap kept visible.
+            </p>
 
-        <aside className="proof-register" aria-label="BotMRR verification snapshot">
-          <div className="register-head">
-            <div>
-              <span className="register-mark" aria-hidden="true">B</span>
-              <div>
-                <strong>Verification snapshot</strong>
-                <span>Reviewed {reviewedDate}</span>
+            <div className="directory-search" role="search">
+              <label htmlFor="directory-search">Search bots, creators, outcomes, or topics</label>
+              <div className="directory-search-field">
+                <Search aria-hidden="true" size={19} strokeWidth={1.8} />
+                <input
+                  id="directory-search"
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Search bots, creators, outcomes, or topics…"
+                  autoComplete="off"
+                  aria-describedby="directory-search-help"
+                />
               </div>
+              <p id="directory-search-help">
+                One search filters both the money claims and the field directory below.
+              </p>
             </div>
-            <span className="register-id">#0001</span>
-          </div>
-          <div className="register-total">
-            <span>Connected money claims</span>
-            <strong>{researchStats.connectedClaims}</strong>
-            <p>We will not paint a self-reported post green.</p>
-          </div>
-          <dl className="register-lines">
-            <div>
-              <dt>Public sources reviewed</dt>
-              <dd>{researchStats.fieldNotes}</dd>
-            </div>
-            <div>
-              <dt>Creator-linked templates</dt>
-              <dd>{researchStats.publicTemplates}</dd>
-            </div>
-            <div>
-              <dt>Claim sources reviewed</dt>
-              <dd>{researchStats.claimReviews}</dd>
-            </div>
-            <div>
-              <dt>Public challenges flagged</dt>
-              <dd>{researchStats.challengedClaims}</dd>
-            </div>
-          </dl>
-          <div className="register-stamp">SOURCE-FIRST · NO FALSE TOTALS</div>
-        </aside>
-      </section>
 
-      <section className="metric-strip page-shell" aria-label="Research totals">
-        <div><strong>{researchStats.fieldNotes}</strong><span>field notes</span></div>
-        <div><strong>{researchStats.publicTemplates}</strong><span>live share links</span></div>
-        <div><strong>{researchStats.claimReviews}</strong><span>claim sources reviewed</span></div>
-        <div><strong>{researchStats.connectedClaims}</strong><span>money connected</span></div>
+            <nav className="directory-jumps" aria-label="Directory sections">
+              <a href="#evidence">
+                <strong>{researchStats.claimReviews}</strong>
+                <span>money claims</span>
+              </a>
+              <a href="#field-notes">
+                <strong>{researchStats.fieldNotes}</strong>
+                <span>field notes</span>
+              </a>
+              <a href="#field-notes">
+                <strong>{researchStats.publicTemplates}</strong>
+                <span>public templates</span>
+              </a>
+            </nav>
+          </div>
+
+          <aside className="directory-stats" aria-label="Verification snapshot">
+            <div className="directory-stat directory-stat-primary">
+              <span>Money sources connected</span>
+              <strong>{researchStats.connectedClaims}</strong>
+              <p>Public posts are leads, not payment proof.</p>
+            </div>
+            <div className="directory-stat">
+              <span>Claim sources reviewed</span>
+              <strong>{researchStats.claimReviews}</strong>
+            </div>
+            <div className="directory-stat">
+              <span>Public challenges flagged</span>
+              <strong>{researchStats.challengedClaims}</strong>
+            </div>
+            <p className="directory-reviewed">Snapshot reviewed {reviewedDate}</p>
+          </aside>
+        </div>
       </section>
 
       <section className="evidence-section page-shell" id="evidence">
-        <header className="section-heading">
+        <header className="section-heading directory-section-heading">
           <div>
-            <p className="overline">PUBLIC CLAIM REVIEW</p>
-            <h2>Claims, with the gaps left in.</h2>
+            <p className="overline">MONEY CLAIM DIRECTORY</p>
+            <h2>What people say their bots earned or saved.</h2>
           </div>
           <p>
-            These are research records, not verified outcomes or a leaderboard. Deal value is not cash, savings are
-            not revenue, and an account balance is not profit.
+            These are source reviews, not verified outcomes. Amounts use different metrics and periods, so entries are
+            not ranked or added together.
           </p>
         </header>
 
-        <div className="case-grid">
-          {claimReviews.map((entry, index) => (
-            <article className={`case-card ${entry.state === "publicly-challenged" ? "case-card-disputed" : ""}`} key={entry.id}>
-              <div className="case-topline">
-                <span className="case-index">{String(index + 1).padStart(2, "0")}</span>
-                <span className={`status-badge ${statusClass(entry.state)}`}>
-                  <i aria-hidden="true" />
-                  {claimReviewStateLabel(entry.state)}
-                </span>
-              </div>
-              <div className="case-claim">
-                <strong>{entry.claim.headline}</strong>
-                <span>{entry.claim.type}</span>
-              </div>
-              <div className="case-title">
-                <h3>{entry.title}</h3>
-                <p>{entry.creator} <span>{entry.handle}</span></p>
-              </div>
-              <dl className="case-checks" aria-label="Independent evidence checks">
-                <div>
-                  <dt>Money</dt>
-                  <dd className={checkClass(entry.checks.money.state)}><i aria-hidden="true" />{entry.checks.money.label}</dd>
-                </div>
-                <div>
-                  <dt>Bot control</dt>
-                  <dd className={checkClass(entry.checks.botControl.state)}><i aria-hidden="true" />{entry.checks.botControl.label}</dd>
-                </div>
-                <div>
-                  <dt>Attribution</dt>
-                  <dd className={checkClass(entry.checks.attribution.state)}><i aria-hidden="true" />{entry.checks.attribution.label}</dd>
-                </div>
-              </dl>
-              <dl className="case-audit">
-                <div>
-                  <dt>What we observed</dt>
-                  <dd>{entry.observed}</dd>
-                </div>
-                <div>
-                  <dt>Still missing</dt>
-                  <dd>{entry.missing}</dd>
-                </div>
-              </dl>
-              <div className="case-links">
-                {entry.sources.map((source) => (
-                  <a href={source.url} target="_blank" rel="noreferrer" key={source.url}>
-                    {source.label} <span aria-hidden="true">↗</span>
-                  </a>
-                ))}
-                {entry.template && (
-                  <a href={entry.template.url} target="_blank" rel="noreferrer">
-                    Open template <span aria-hidden="true">↗</span>
-                  </a>
-                )}
-                {entry.relatedPlaybookId && packageIds.has(entry.relatedPlaybookId) && (
-                  <Link href={`/bots/${entry.relatedPlaybookId}`}>Independent workflow →</Link>
-                )}
-              </div>
-            </article>
-          ))}
+        <div className="directory-toolbar">
+          <div className="filter-chips" aria-label="Filter money claims by metric">
+            {["All", ...claimTypes].map((filter) => (
+              <button
+                className={`filter-chip ${claimFilter === filter ? "filter-chip-active" : ""}`}
+                type="button"
+                aria-pressed={claimFilter === filter}
+                onClick={() => setClaimFilter(filter)}
+                key={filter}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <p className="directory-count" aria-live="polite">
+            Showing <strong>{filteredClaims.length}</strong> of {researchStats.claimReviews} claims
+          </p>
         </div>
+
+        {filteredClaims.length > 0 ? (
+          <div className="claim-board">
+            <div className="claim-board-head" aria-hidden="true">
+              <span>#</span>
+              <span>Bot / outcome</span>
+              <span>Publisher</span>
+              <span>Money</span>
+              <span>Evidence</span>
+              <span />
+            </div>
+
+            {filteredClaims.map((entry) => {
+              const sourceIndex = claimReviews.findIndex((claim) => claim.id === entry.id) + 1;
+
+              return (
+                <details
+                  className={`claim-row ${entry.state === "publicly-challenged" ? "claim-row-disputed" : ""}`}
+                  key={entry.id}
+                >
+                  <summary className="claim-summary">
+                    <span className="claim-number">{String(sourceIndex).padStart(2, "0")}</span>
+                    <div className="claim-identity">
+                      <span className="claim-avatar" aria-hidden="true">{initials(entry.title)}</span>
+                      <div>
+                        <h3>{entry.title}</h3>
+                        <p>{entry.observed}</p>
+                      </div>
+                    </div>
+                    <div className="claim-publisher">
+                      <strong>{entry.creator}</strong>
+                      <span>{entry.handle}</span>
+                    </div>
+                    <div className="claim-money">
+                      <strong>{entry.claim.headline}</strong>
+                      <span>{entry.claim.type}</span>
+                    </div>
+                    <div className="claim-evidence">
+                      <span className={`status-badge ${statusClass(entry.state)}`}>
+                        <i aria-hidden="true" />
+                        {claimReviewStateLabel(entry.state)}
+                      </span>
+                      <span className="trust-dots" aria-label="Evidence checks">
+                        <TrustIndicator shortLabel="M" label="Money" check={entry.checks.money} />
+                        <TrustIndicator shortLabel="B" label="Bot control" check={entry.checks.botControl} />
+                        <TrustIndicator shortLabel="A" label="Attribution" check={entry.checks.attribution} />
+                      </span>
+                    </div>
+                    <ChevronDown className="claim-chevron" aria-hidden="true" size={18} />
+                  </summary>
+
+                  <div className="claim-expanded">
+                    <dl className="claim-expanded-grid" aria-label="Independent evidence checks">
+                      <div>
+                        <dt>Money</dt>
+                        <dd className={checkClass(entry.checks.money.state)}>
+                          <i aria-hidden="true" />
+                          {entry.checks.money.label}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Bot control</dt>
+                        <dd className={checkClass(entry.checks.botControl.state)}>
+                          <i aria-hidden="true" />
+                          {entry.checks.botControl.label}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Attribution</dt>
+                        <dd className={checkClass(entry.checks.attribution.state)}>
+                          <i aria-hidden="true" />
+                          {entry.checks.attribution.label}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <dl className="claim-audit">
+                      <div>
+                        <dt>What we observed</dt>
+                        <dd>{entry.observed}</dd>
+                      </div>
+                      <div>
+                        <dt>Still missing</dt>
+                        <dd>{entry.missing}</dd>
+                      </div>
+                    </dl>
+
+                    <div className="claim-expanded-footer">
+                      <div className="claim-links">
+                        {entry.sources.map((source) => (
+                          <a href={source.url} target="_blank" rel="noreferrer" key={source.url}>
+                            {source.label} <span aria-hidden="true">↗</span>
+                          </a>
+                        ))}
+                        {entry.template && (
+                          <a href={entry.template.url} target="_blank" rel="noreferrer">
+                            {entry.template.name} <span aria-hidden="true">↗</span>
+                          </a>
+                        )}
+                        {entry.relatedPlaybookId && packageIdSet.has(entry.relatedPlaybookId) && (
+                          <Link href={`/bots/${entry.relatedPlaybookId}`}>Independent workflow →</Link>
+                        )}
+                      </div>
+                      <span>Reviewed {formatReviewedAt(entry.reviewedAt)}</span>
+                    </div>
+                  </div>
+                </details>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="empty-state" role="status">
+            <strong>No money claims match this view.</strong>
+            <p>Try another metric or clear the search field.</p>
+          </div>
+        )}
+
         <p className="ledger-footnote">
-          “Source only” means the linked public post was available on {reviewedDate}; it does not verify the amount.
-          A creator-run ledger remains creator-operated. “Publicly challenged” records a visible evidence challenge,
-          not a final adjudication by BotMRR.
+          Entry numbers are references, not ranks. “Source only” means the public post was available when reviewed; it
+          does not verify the amount. A creator-run ledger is still creator-operated.
         </p>
       </section>
 
-      <section className="method-section" id="method">
-        <div className="page-shell method-shell">
-          <header className="method-heading">
+      <section className="method-strip" id="method">
+        <div className="page-shell method-strip-inner">
+          <header>
             <p className="overline">THE BOTMRR STANDARD</p>
-            <h2>A green check should never mean more than it says.</h2>
-            <p>The proposed standard keeps three questions independent and dates every answer.</p>
+            <h2>One claim. Three independent checks.</h2>
           </header>
-          <div className="method-grid">
-            <article>
-              <span>01</span>
-              <h3>Did the money exist?</h3>
-              <p>A future receipt needs a real evidence method plus the exact metric, period, refunds, fees, and currency. None is connected today.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Who controls the bot?</h3>
-              <p>A future nonce challenge could show control of one shared configuration—not original authorship. That flow is not implemented yet.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>What did the bot influence?</h3>
-              <p>Owner reports are labeled as reports. Stronger attribution needs a tracked link, coupon, CRM event, or experiment.</p>
-            </article>
-            <article>
-              <span>04</span>
-              <h3>How fresh is the receipt?</h3>
-              <p>A connected result should carry a data-through date. No provider connection will receive a badge until stale-data handling exists.</p>
-            </article>
+          <div className="method-checks">
+            <div className="method-check">
+              <span>M</span>
+              <div><strong>Money</strong><p>Did a payment, payout, or balance exist?</p></div>
+            </div>
+            <div className="method-check">
+              <span>B</span>
+              <div><strong>Bot control</strong><p>Can the publisher show control of the shared bot?</p></div>
+            </div>
+            <div className="method-check">
+              <span>A</span>
+              <div><strong>Attribution</strong><p>What evidence connects the outcome to the bot?</p></div>
+            </div>
           </div>
-          <div className="method-bottom">
-            <p>
-              A payment connection proves a payment. It does <em>not</em> prove a bot caused it.
-            </p>
-            <Link href="/methodology">Read the full methodology →</Link>
-          </div>
+          <Link href="/methodology">Read the full methodology →</Link>
         </div>
       </section>
 
       <section className="notes-section page-shell" id="field-notes">
-        <header className="section-heading notes-heading">
+        <header className="section-heading directory-section-heading">
           <div>
-            <p className="overline">GROK BOT FIELD NOTES</p>
-            <h2>What people are actually building.</h2>
+            <p className="overline">GROK BOT FIELD DIRECTORY</p>
+            <h2>Templates, workflows, and useful launch signals.</h2>
           </div>
           <p>
-            Fifteen source-backed signals from launch week. Useful for discovery; never silently promoted into the evidence ledger.
+            Source-backed discovery records from launch week. These are useful ideas, not endorsements or proof that a
+            bot produces an outcome.
           </p>
         </header>
 
-        <div className="notes-list">
-          {fieldNotes.map((entry, index) => (
-            <article className="note-row" key={entry.id}>
-              <span className="note-number">{String(index + 1).padStart(2, "0")}</span>
-              <div className="note-body">
-                <div className="note-labels">
-                  <span>{entry.kind}</span>
-                  <span>{entry.topic}</span>
-                </div>
-                <h3>{entry.title}</h3>
-                <p>{entry.summary}</p>
-                <div className="note-meta">
-                  <span>{entry.source.author} · {entry.source.handle}</span>
-                  <time dateTime={entry.publishedAt}>{formatPublishedAt(entry.publishedAt)}</time>
-                </div>
-              </div>
-              <div className="note-actions">
-                <a href={entry.source.url} target="_blank" rel="noreferrer">
-                  View source <span aria-hidden="true">↗</span>
-                </a>
-                {entry.template && (
-                  <a href={entry.template.url} target="_blank" rel="noreferrer" className="note-template-link">
-                    {entry.template.name} <span aria-hidden="true">↗</span>
-                  </a>
-                )}
-                {entry.relatedPlaybookId && packageIds.has(entry.relatedPlaybookId) && (
-                  <Link href={`/bots/${entry.relatedPlaybookId}`}>Independent workflow →</Link>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="position-section page-shell">
-        <div className="position-copy">
-          <p className="overline">WHERE BOTMRR FITS</p>
-          <h2>Discovery is crowded. Proof is still empty.</h2>
-          <p>
-            xAI hosts the shared template, and independent directories already catalog what people are building. BotMRR should not clone either layer.
-            Its durable job is to make outcome claims comparable, challengeable, and current.
+        <div className="directory-toolbar">
+          <div className="filter-chips" aria-label="Filter field notes by kind">
+            {["All", ...noteKinds].map((filter) => (
+              <button
+                className={`filter-chip ${noteFilter === filter ? "filter-chip-active" : ""}`}
+                type="button"
+                aria-pressed={noteFilter === filter}
+                onClick={() => setNoteFilter(filter)}
+                key={filter}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <p className="directory-count" aria-live="polite">
+            Showing <strong>{filteredNotes.length}</strong> of {researchStats.fieldNotes} records
           </p>
         </div>
-        <div className="position-map" aria-label="Bot ecosystem layers">
-          <div><span>01</span><strong>Grok Bot</strong><p>Create and share the template.</p></div>
-          <div><span>02</span><strong>Directories</strong><p>Help people discover what exists.</p></div>
-          <div className="position-active"><span>03</span><strong>BotMRR</strong><p>Show what the evidence supports.</p></div>
-        </div>
+
+        {filteredNotes.length > 0 ? (
+          <div className="notes-board">
+            <div className="notes-board-head" aria-hidden="true">
+              <span>#</span>
+              <span>Bot / workflow</span>
+              <span>Publisher</span>
+              <span>Category</span>
+              <span>Access</span>
+            </div>
+
+            {filteredNotes.map((entry) => {
+              const sourceIndex = fieldNotes.findIndex((note) => note.id === entry.id) + 1;
+
+              return (
+                <article className="note-row" key={entry.id}>
+                  <span className="note-number">{String(sourceIndex).padStart(2, "0")}</span>
+                  <div className="note-summary">
+                    <h3>{entry.title}</h3>
+                    <p>{entry.summary}</p>
+                  </div>
+                  <div className="note-publisher">
+                    <strong>{entry.source.author}</strong>
+                    <span>{entry.source.handle}</span>
+                    <time dateTime={entry.publishedAt}>{formatPublishedAt(entry.publishedAt)}</time>
+                  </div>
+                  <div className="note-category">
+                    <span>{entry.kind}</span>
+                    <small>{entry.topic}</small>
+                  </div>
+                  <div className="note-access">
+                    <a href={entry.source.url} target="_blank" rel="noreferrer">
+                      Original source <span aria-hidden="true">↗</span>
+                    </a>
+                    {entry.template && (
+                      <a href={entry.template.url} target="_blank" rel="noreferrer">
+                        {entry.template.name} <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                    {entry.relatedPlaybookId && packageIdSet.has(entry.relatedPlaybookId) && (
+                      <Link href={`/bots/${entry.relatedPlaybookId}`}>Independent workflow →</Link>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="empty-state" role="status">
+            <strong>No directory records match this view.</strong>
+            <p>Try another category or clear the search field.</p>
+          </div>
+        )}
       </section>
 
-      <section className="closing-callout page-shell">
+      <section className="directory-cta page-shell">
         <div>
-          <p className="overline">BUILD THE FIRST REAL RECEIPT</p>
-          <h2>Made money with a Grok Bot?</h2>
-          <p>Start with the public post and share link. BotMRR will record it as a source lead and keep every caveat visible.</p>
+          <p className="overline">ADD A PUBLIC RECEIPT</p>
+          <h2>Made or saved money with a Grok Bot?</h2>
+          <p>Share the post and bot link. BotMRR will record the source without upgrading it into proof.</p>
         </div>
         <Link href="/publish" className="button button-light">Suggest a public source</Link>
       </section>

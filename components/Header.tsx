@@ -16,8 +16,8 @@ export default function Header() {
           <span className="brand-by">by OpenMausBot</span>
         </Link>
         <div className="header-links">
-          <Link href="/#evidence">Evidence</Link>
-          <Link href="/#field-notes">Field notes</Link>
+          <Link href="/#evidence">Money board</Link>
+          <Link href="/#field-notes">Bot directory</Link>
           <Link href="/methodology">Method</Link>
           <Link href="/publish">Suggest source</Link>
           <a

@@ -9,12 +9,12 @@ export default function Footer() {
             <img src="/app-icon.png" width="32" height="32" alt="" />
             <span>BotMRR</span>
           </div>
-          <p>An independent evidence ledger for the bot economy. Claims stay claims until the money, bot, and attribution checks say otherwise.</p>
+          <p>A public directory of bot outcomes and the evidence behind them. Claims stay claims until the money, bot, and attribution checks say otherwise.</p>
         </div>
         <div>
           <h2>Evidence</h2>
           <Link href="/#evidence">Money claims</Link>
-          <Link href="/#field-notes">Grok Bot field notes</Link>
+          <Link href="/#field-notes">Grok Bot directory</Link>
           <Link href="/methodology">Methodology</Link>
           <Link href="/publish">Suggest a source</Link>
         </div>
