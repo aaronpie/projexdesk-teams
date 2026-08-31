@@ -11,7 +11,7 @@ export default function SponsorPage() {
         <h1>Put your product beside teams people can run.</h1>
         <p>
           BotMRR has ten permanent sponsor positions around the directory. Each placement includes your name,
-          logo, one useful sentence, and a direct link. Founding spots are open while self-serve checkout is being built.
+          logo, one useful sentence, and a direct link. Sponsorship requests are open while self-serve checkout is being built.
         </p>
         <div className="detail-actions">
           <a className="button button-primary" href={sponsorRequestUrl} target="_blank" rel="noreferrer">
