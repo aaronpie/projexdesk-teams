@@ -8,6 +8,8 @@ import "./globals.css";
 
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
+const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem("botmrr-theme")==="light"?"light":"dark"}catch{document.documentElement.dataset.theme="dark"}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://botmrr.io"),
   title: {
@@ -33,7 +35,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={mono.variable} suppressHydrationWarning>
+    <html lang="en" className={mono.variable} data-theme="dark" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
       <body>
         <Header />
         {children}
