@@ -3,13 +3,8 @@
 import {
   ArrowUpRight,
   Bot,
-  Download,
-  FileText,
-  Github,
   Plus,
   Search,
-  ShieldCheck,
-  Sparkles,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -37,72 +32,20 @@ export interface DirectoryEntry {
 
 type SortOption = "featured" | "agents" | "setup" | "name";
 
-const railItems = [
-  {
-    icon: Download,
-    title: "OpenMausBot",
-    body: "Install a complete team in one click",
-    href: "https://openmausbot.com",
-    external: true,
-    tone: "blue",
-  },
-  {
-    icon: FileText,
-    title: "One Markdown file",
-    body: "Portable across OpenMausBot, Grok, Claude, and ChatGPT",
-    href: "/methodology",
-    tone: "sand",
-  },
-  {
-    icon: Plus,
-    title: "Publish a team",
-    body: "Share a useful playbook with everyone",
-    href: "/publish",
-    tone: "plain",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Safe by default",
-    body: "No credentials, memories, or permissions inside a template",
-    href: "/methodology",
-    tone: "plain",
-  },
-  {
-    icon: Github,
-    title: "Open source",
-    body: "Fork, improve, and publish through GitHub",
-    href: "https://github.com/milind-soni/openmausbot-teams",
-    external: true,
-    tone: "plain",
-  },
-  {
-    icon: Sparkles,
-    title: "More teams soon",
-    body: "New outcomes are added from community submissions",
-    href: "/publish",
-    tone: "plain",
-  },
-] as const;
+const sponsorSlots = Array.from({ length: 10 }, (_, index) => ({
+  slot: index + 1,
+  href: `/sponsor?slot=${index + 1}`,
+}));
 
-function RailCard({ item }: { item: (typeof railItems)[number] }) {
-  const Icon = item.icon;
-  const content = (
-    <>
-      <span className="rail-card-icon"><Icon size={21} strokeWidth={1.8} /></span>
-      <strong>{item.title}</strong>
-      <p>{item.body}</p>
-    </>
+function SponsorCard({ slot, href }: { slot: number; href: string }) {
+  return (
+    <Link className="sponsor-card" href={href} aria-label={`Sponsor BotMRR in slot ${slot}`}>
+      <span className="sponsor-card-icon" aria-hidden="true"><Plus size={20} strokeWidth={1.7} /></span>
+      <strong>Sponsor</strong>
+      <p>Founding spots are open</p>
+      <small>Slot {slot} of 10</small>
+    </Link>
   );
-
-  if ("external" in item && item.external) {
-    return (
-      <a className={`rail-card rail-card-${item.tone}`} href={item.href} target="_blank" rel="noreferrer">
-        {content}
-      </a>
-    );
-  }
-
-  return <Link className={`rail-card rail-card-${item.tone}`} href={item.href}>{content}</Link>;
 }
 
 function TeamCard({ entry, index }: { entry: DirectoryEntry; index: number }) {
@@ -195,14 +138,14 @@ export default function Directory({ entries }: { entries: DirectoryEntry[] }) {
     });
   }, [entries, integration, searchTerm, sort]);
 
-  const leftRail = railItems.slice(0, 3);
-  const rightRail = railItems.slice(3);
+  const leftRail = sponsorSlots.slice(0, 5);
+  const rightRail = sponsorSlots.slice(5);
 
   return (
     <main className="directory-page">
       <div className="directory-stage">
-        <aside className="directory-rail directory-rail-left" aria-label="BotMRR highlights">
-          {leftRail.map((item) => <RailCard item={item} key={item.title} />)}
+        <aside className="directory-rail directory-rail-left" aria-label="BotMRR sponsors">
+          {leftRail.map((slot) => <SponsorCard {...slot} key={slot.slot} />)}
         </aside>
 
         <div className="directory-center">
@@ -263,8 +206,8 @@ export default function Directory({ entries }: { entries: DirectoryEntry[] }) {
           </section>
         </div>
 
-        <aside className="directory-rail directory-rail-right" aria-label="BotMRR project links">
-          {rightRail.map((item) => <RailCard item={item} key={item.title} />)}
+        <aside className="directory-rail directory-rail-right" aria-label="BotMRR sponsors">
+          {rightRail.map((slot) => <SponsorCard {...slot} key={slot.slot} />)}
         </aside>
       </div>
     </main>
