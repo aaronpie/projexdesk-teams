@@ -42,8 +42,7 @@ function SponsorCard({ slot, href }: { slot: number; href: string }) {
     <Link className="sponsor-card" href={href} aria-label={`Sponsor BotMRR in slot ${slot}`}>
       <span className="sponsor-card-icon" aria-hidden="true"><Plus size={20} strokeWidth={1.7} /></span>
       <strong>Sponsor</strong>
-      <p>Founding spots are open</p>
-      <small>Slot {slot} of 10</small>
+      <p>0 of 10 spots taken</p>
     </Link>
   );
 }
