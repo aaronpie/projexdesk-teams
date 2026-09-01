@@ -150,7 +150,7 @@ export default function Directory({ entries }: { entries: DirectoryEntry[] }) {
         <div className="directory-center">
           <section className="directory-hero" aria-labelledby="directory-title">
             <div className="directory-hero-copy">
-              <h1 id="directory-title">There&apos;s a BotMRR team for that.</h1>
+              <h1 id="directory-title">Bot templates that make money</h1>
               <p>Discover ready-to-run AI teams for sales, marketing, research, operations, coding, and everyday work.</p>
               <label className="hero-search">
                 <Search size={19} strokeWidth={1.7} aria-hidden="true" />
