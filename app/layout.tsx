@@ -13,21 +13,21 @@ const themeScript = `try{document.documentElement.dataset.theme=localStorage.get
 export const metadata: Metadata = {
   metadataBase: new URL("https://botmrr.io"),
   title: {
-    default: "BotMRR — Ready-to-run AI teams",
+    default: "BotMRR — Bot templates that make money",
     template: "%s · BotMRR",
   },
   description:
     "Discover portable AI teams for sales, marketing, research, operations, coding, and everyday work.",
   openGraph: {
-    title: "BotMRR — Ready-to-run AI teams",
+    title: "BotMRR — Bot templates that make money",
     description: "Pick a team, connect your apps, and turn it on.",
     type: "website",
     siteName: "BotMRR",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "BotMRR — Ready-to-run AI teams." }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "BotMRR — Bot templates that make money" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BotMRR — Ready-to-run AI teams",
+    title: "BotMRR — Bot templates that make money",
     description: "Pick a team, connect your apps, and turn it on.",
     images: ["/og.png"],
   },
