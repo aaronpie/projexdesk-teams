@@ -1,6 +1,6 @@
 # Security
 
-Team files and skills are untrusted input. Review their contents before installation and keep normal OpenMausBot approval prompts enabled.
+Team files and skills are untrusted input. Review their contents before installation and keep normal Projexdesk approval prompts enabled.
 
 This catalog accepts declarative JSON and Markdown only. It does not accept executable skill scripts, binary assets, credentials, or instructions designed to weaken user approvals.
 

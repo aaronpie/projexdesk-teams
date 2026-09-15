@@ -1,5 +1,5 @@
 {
-  "format": "openmaus.catalog",
+  "format": "projexdesk.catalog",
   "version": 1,
   "teams": [
     {
@@ -11,7 +11,7 @@
       "setupMinutes": 5,
       "featured": true,
       "package": "packages/seo-growth.md",
-      "manifest": "teams/seo-growth/team.mausteam.json",
+      "manifest": "teams/seo-growth/team.projexdeskteam.json",
       "readme": "teams/seo-growth/README.md",
       "members": 4,
       "skills": [
@@ -32,7 +32,7 @@
       "setupMinutes": 3,
       "featured": true,
       "package": "packages/engineering.md",
-      "manifest": "teams/engineering/team.mausteam.json",
+      "manifest": "teams/engineering/team.projexdeskteam.json",
       "readme": "teams/engineering/README.md",
       "members": 4,
       "skills": [
@@ -53,7 +53,7 @@
       "setupMinutes": 5,
       "featured": true,
       "package": "packages/100x-marketing.md",
-      "manifest": "teams/100x-marketing/team.mausteam.json",
+      "manifest": "teams/100x-marketing/team.projexdeskteam.json",
       "readme": "teams/100x-marketing/README.md",
       "members": 4,
       "skills": [
@@ -74,7 +74,7 @@
       "setupMinutes": 6,
       "featured": true,
       "package": "packages/reddit-lead-miner.md",
-      "manifest": "teams/reddit-lead-miner/team.mausteam.json",
+      "manifest": "teams/reddit-lead-miner/team.projexdeskteam.json",
       "readme": "teams/reddit-lead-miner/README.md",
       "members": 2,
       "skills": [
@@ -94,7 +94,7 @@
       "setupMinutes": 4,
       "featured": true,
       "package": "packages/competitor-watch.md",
-      "manifest": "teams/competitor-watch/team.mausteam.json",
+      "manifest": "teams/competitor-watch/team.projexdeskteam.json",
       "readme": "teams/competitor-watch/README.md",
       "members": 2,
       "skills": [
@@ -114,7 +114,7 @@
       "setupMinutes": 5,
       "featured": true,
       "package": "packages/inbox-follow-up.md",
-      "manifest": "teams/inbox-follow-up/team.mausteam.json",
+      "manifest": "teams/inbox-follow-up/team.projexdeskteam.json",
       "readme": "teams/inbox-follow-up/README.md",
       "members": 2,
       "skills": [
