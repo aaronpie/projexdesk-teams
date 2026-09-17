@@ -39,12 +39,18 @@ OpenMausBot can install the same Markdown directly, creating the bots, Chief of 
 
 Suggested routines always start paused. Connections are requirements, never credentials. A playbook never contains conversations, OAuth grants, approvals, memory, provider sessions, local paths, or secrets.
 
+## Agent skills
+
+- [`skills/marketplace-bot-to-playbook`](skills/marketplace-bot-to-playbook/SKILL.md) turns a public bot marketplace or share link into an independent, safety-reviewed playbook for `packages/`. Coding agents find it through `.claude/skills/` and `.agents/skills/`. ProjexDesk bots can import it from this folder's GitHub URL.
+- [`packages/cm-bot-architect.md`](packages/cm-bot-architect.md) is the first playbook built with this skill: a bot that designs focused bots for construction-management teams.
+
 ## Repository structure
 
 - [`packages/`](packages) contains the independent one-file Markdown playbooks.
 - [`FORMAT.md`](FORMAT.md) documents the small portable convention.
 - [`catalog.json`](catalog.json) indexes the original OpenMausBot-compatible teams.
 - [`teams/`](teams) retains their compatibility files for older OpenMausBot versions.
+- [`skills/`](skills) contains Markdown-only agent skills for maintaining this catalog.
 
 Pull requests validate every playbook, compatibility manifest, and safety boundary, then build the site.
 
