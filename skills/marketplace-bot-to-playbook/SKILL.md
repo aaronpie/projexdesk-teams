@@ -10,6 +10,11 @@ Turn a public bot listing from another agent product (a marketplace page or publ
 
 The output is an **independent reconstruction inspired by** the public listing. It is not a copy of the creator's configuration.
 
+## Where this skill runs
+
+- **Coding agents** working in a checkout of `projexdesk-teams`. The skill lives in `skills/marketplace-bot-to-playbook/`, with links from `.claude/skills/` and `.agents/skills/`. The agent writes the file, runs the checker, and prepares a branch for review.
+- **ProjexDesk bots.** Import the skill from its GitHub folder URL (`https://github.com/aaronpie/projexdesk-teams/tree/main/skills/marketplace-bot-to-playbook`). Without a repo checkout, the bot returns the finished playbook file for the user to review, and a person or coding agent adds it to the repo.
+
 ## When to use
 
 - "Translate this marketplace bot into a ProjexDesk template: <url>"
@@ -25,6 +30,7 @@ The output is an **independent reconstruction inspired by** the public listing. 
 | `shape` | no | `single-bot` or `team`. Infer from the listing if not given. |
 | `adapt` | no | e.g. `construction-management`. Adds the CM role, approval, and vocabulary layer (Step 5). |
 | `id` | no | Package slug. Default: a descriptive, neutral slug (Step 6). |
+| `publish` | no | `library` also lists the package in the app's Explore tab (Step 9). Omitted, the package stays a standalone file that users import by GitHub link. |
 
 If `url` is missing or not https, stop and ask for it.
 
@@ -115,11 +121,12 @@ Target path: `packages/<id>.md`. The `id` must equal the filename stem and match
 The body must stand on its own when pasted into any agent product, and it must agree with the frontmatter.
 
 ### Step 7: Validate
-From the repo root:
+With a repo checkout, work on a new branch (never directly on `main`) and run from the repo root:
 ```
+npm ci
 npm test
 ```
-Fix every error. If the validator can't run, check manually against Step 6 and say so.
+Fix every error in the new file. If the checker can't run (for example, when a ProjexDesk bot has no checkout), check the file manually against Step 6 and say so in the report.
 If a ProjexDesk checkout is available, also confirm the file imports through ProjexDesk's package parser (`parseBotPackage` in `server/bot-package.ts`). Its limits are the source of truth: agent keys are unique, playbook and skill references resolve, room members exist, routines are disabled after install, and embedded skill frontmatter matches its entry.
 
 ### Step 8: Report for human review
@@ -131,7 +138,39 @@ Return:
 5. **Inferred:** anything not stated on the page
 6. **Rights status:** mode and permission reference
 7. Proposed catalog/site changes (if any)
-8. A request for approval before commit/PR
+8. A request for approval before commit/PR (coding agents), or the finished file for the user to review (ProjexDesk bots)
+
+If `publish: library` was requested, complete Step 9 first and report both together.
+
+### Step 9: Optional — publish to the ProjexDesk Explore library (`publish: library`)
+
+By default a new package is a standalone file in `packages/`. Users can import it from the Teams panel with Import → GitHub and the file's GitHub link. To make it appear in the Explore tab, add it to `catalog.json` and create its compatibility folder. Do this only when the user asks (`publish: library`).
+
+1. **Create `teams/<id>/team.projexdeskteam.json`.** Copy the shape of `teams/reddit-lead-miner/team.projexdeskteam.json`. Use `"format": "projexdesk.team"`, `"version": 1`. Under `team`, set `name` and `description` from the package, and one `members[]` entry per package agent with the same `key`, `name`, `title`, `description` (≤ 4,000 chars), and `appearance`. If the package has a room, add `room` with `name`, `bulletin`, and `defaultResponder: { "kind": "member", "member": "<chiefOfStaff key>" }`. Never add routines, playbooks, or secrets here; the `.md` package is the source of truth.
+2. **Create `teams/<id>/README.md`.** Short: one-line purpose, a `## Members` list (Name — Title: what they own), a `## Included skills` list, and a `## Helpful connections` paragraph that says connections happen inside ProjexDesk and the package holds no credentials.
+3. **Create at least one skill at `teams/<id>/skills/<skill-slug>/SKILL.md`.** The catalog requires one. Convert the package's most reusable playbook into a SKILL.md with YAML frontmatter (`name`, `description`) and Markdown instructions only. Copy the frontmatter shape from an existing `teams/*/skills/*/SKILL.md`. No scripts, no encoded content.
+4. **Add the entry to `catalog.json`** at the end of `teams[]`:
+   ```json
+   {
+     "slug": "<id>",
+     "name": "<package name>",
+     "summary": "<= 300 chars",
+     "category": "<package category>",
+     "outcome": "<first package outcome, <= 300 chars>",
+     "setupMinutes": <package setupMinutes>,
+     "featured": false,
+     "package": "packages/<id>.md",
+     "manifest": "teams/<id>/team.projexdeskteam.json",
+     "readme": "teams/<id>/README.md",
+     "members": <number of package agents>,
+     "skills": ["teams/<id>/skills/<skill-slug>/SKILL.md"],
+     "requires": { "apps": ["<app label>", "..."] }
+   }
+   ```
+   `members` must equal the number of agents in both the package and the manifest. `slug` must equal the package `id`. `requires.apps` lists the labels from `requirements.apps`, or `[]`.
+5. **Validate.** Run `npm test` and `npm run build` from the repo root. Fix every error before reporting.
+6. **Check the app side.** The Explore tab only reads the repo named in the app's `server/team-library.ts` (`TEAM_LIBRARY_REPOSITORY`, `TEAM_LIBRARY_RAW_ROOT`, `TEAM_LIBRARY_CATALOG_URL`). Upstream OpenMausBot points at `milind-soni/openmausbot-teams` and expects `"format": "openmaus.catalog"` and manifests ending in `.mausteam.json`. This repo uses `"format": "projexdesk.catalog"` and `.projexdeskteam.json`. If the user's app build has not been updated to this repo and these format names, say so in the report and tell the user the package is still importable by GitHub link. Do not edit the app repo without approval.
+7. **Report.** List the four new or changed files, the validation output, and whether the app side matches. Ask for approval before commit or PR.
 
 ## Failure handling
 
