@@ -62,8 +62,8 @@ function text(value, max) {
 function validateManifest(path, expectedMembers) {
   const manifest = json(path);
   if (!manifest) return;
-  if (manifest.format !== "openmaus.team" || manifest.version !== 1) {
-    fail(`${path}: expected openmaus.team version 1`);
+  if (manifest.format !== "projexdesk.team" || manifest.version !== 1) {
+    fail(`${path}: expected projexdesk.team version 1`);
     return;
   }
   const team = manifest.team;
@@ -234,8 +234,8 @@ function validatePackage(path, slug, expectedMembers) {
 }
 
 const catalog = json("catalog.json");
-if (!catalog || catalog.format !== "openmaus.catalog" || catalog.version !== 1 || !Array.isArray(catalog.teams)) {
-  fail("catalog.json: expected openmaus.catalog version 1");
+if (!catalog || catalog.format !== "projexdesk.catalog" || catalog.version !== 1 || !Array.isArray(catalog.teams)) {
+  fail("catalog.json: expected projexdesk.catalog version 1");
 } else {
   const slugs = new Set();
   for (const team of catalog.teams) {
@@ -243,7 +243,7 @@ if (!catalog || catalog.format !== "openmaus.catalog" || catalog.version !== 1 |
     else if (slugs.has(team.slug)) fail(`catalog.json: duplicate slug ${team.slug}`);
     else slugs.add(team.slug);
     if (!text(team.name, 100) || !text(team.summary, 300)) fail(`catalog.json: ${team.slug} needs a name and summary`);
-    if (!safeFile(team.manifest, ".mausteam.json")) fail(`catalog.json: missing manifest for ${team.slug}`);
+    if (!safeFile(team.manifest, ".projexdeskteam.json")) fail(`catalog.json: missing manifest for ${team.slug}`);
     else validateManifest(team.manifest, team.members);
     if (!safeFile(team.package, ".md")) fail(`catalog.json: missing Markdown playbook for ${team.slug}`);
     else if (!team.package.startsWith("packages/")) fail(`catalog.json: package must stay inside packages/`);
