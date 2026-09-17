@@ -124,6 +124,25 @@
       "requires": {
         "apps": ["Gmail", "HubSpot"]
       }
+    },
+    {
+      "slug": "bot-design-desk",
+      "name": "Bot Design Desk",
+      "summary": "One bot that designs focused bots with one job, explicit anti-jobs, and approval boundaries, then keeps the roster healthy.",
+      "category": "Automation",
+      "outcome": "Turn a one-line need into a focused bot with one job, explicit anti-jobs, and clear approval boundaries.",
+      "setupMinutes": 5,
+      "featured": false,
+      "package": "packages/bot-design-desk.md",
+      "manifest": "teams/bot-design-desk/team.projexdeskteam.json",
+      "readme": "teams/bot-design-desk/README.md",
+      "members": 1,
+      "skills": [
+        "teams/bot-design-desk/skills/focused-bot-design/SKILL.md"
+      ],
+      "requires": {
+        "apps": []
+      }
     }
   ]
 }
