@@ -80,7 +80,8 @@ If the page shows too little to reconstruct the job, stop and tell the user what
 | Secret-request flow | "Use ProjexDesk App Settings / the normal connection flow. Never paste secrets in chat." |
 | Multi-bot group chat | `rooms[]` with `members`, `bulletin`, `defaultResponder` |
 | Orchestrator / chief bot | `chiefOfStaff: <key>`. For a single-bot package, that bot is its own Chief of Staff. |
-| Memory / learned preferences | Not transferred. Add a first-run interview step instead. |
+| First-run / setup steps (bot sets itself up on install) | ProjexDesk sends a kickoff message to the Chief of Staff right after import. Write `## Activation` so the bot can answer it: what it owns, what it never does without approval, its paused routines, skills it wants to propose, and at most 3 setup questions. |
+| Memory / learned preferences | Not transferred. The kickoff asks the setup questions instead; put them in `## Activation`. |
 | Model choice, cloud VM, tunnels, local hosting | Drop. Mention in the review notes as "not carried over." |
 
 ### Step 4: Safety review
@@ -169,7 +170,7 @@ By default a new package is a standalone file in `packages/`. Users can import i
    ```
    `members` must equal the number of agents in both the package and the manifest. `slug` must equal the package `id`. `requires.apps` lists the labels from `requirements.apps`, or `[]`.
 5. **Validate.** Run `npm test` and `npm run build` from the repo root. Fix every error before reporting.
-6. **Check the app side.** The Explore tab only reads the repo named in the app's `server/team-library.ts` (`TEAM_LIBRARY_REPOSITORY`, `TEAM_LIBRARY_RAW_ROOT`, `TEAM_LIBRARY_CATALOG_URL`). Upstream OpenMausBot points at `milind-soni/openmausbot-teams` and expects `"format": "openmaus.catalog"` and manifests ending in `.mausteam.json`. This repo uses `"format": "projexdesk.catalog"` and `.projexdeskteam.json`. If the user's app build has not been updated to this repo and these format names, say so in the report and tell the user the package is still importable by GitHub link. Do not edit the app repo without approval.
+6. **Check the app side.** The Explore tab only reads the repo named in the app's `server/team-library.ts` (`TEAM_LIBRARY_REPOSITORY`, `TEAM_LIBRARY_RAW_ROOT`, `TEAM_LIBRARY_CATALOG_URL`). The app must run a build that reads `aaronpie/projexdesk-teams` and accepts the `projexdesk.catalog` / `projexdesk.team` / `.projexdeskteam.json` names as well as the legacy `openmaus.*` / `.mausteam.json` ones. Older builds still point at `milind-soni/openmausbot-teams` and import this repo's packages by GitHub link only. If the user's build is older, say so in the report. Do not edit the app repo without approval.
 7. **Report.** List the four new or changed files, the validation output, and whether the app side matches. Ask for approval before commit or PR.
 
 ## Failure handling
