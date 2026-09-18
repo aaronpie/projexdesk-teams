@@ -73,7 +73,7 @@ If the page shows too little to reconstruct the job, stop and tell the user what
 | Bot identity (name, title, description) | `agents[]` entry: `key`, `name`, `title`, `description` (≤ 4,000 chars), `appearance.color` |
 | Long persona / standing rules | `agents[].soul` (≤ 24 KB), only if the description can't hold it |
 | "Create agent" tool / bot that builds bots | Instruction to create bots through ProjexDesk's normal bot-creation flow, with user confirmation before each bot is created |
-| Named skills / slash commands | `playbooks[]` (inline instructions + triggers). Use embedded `skills.entries` (SKILL.md, max 20) only when the procedure is long and reusable. Each embedded skill must be referenced by an agent. |
+| Named skills / slash commands | `playbooks[]` (inline instructions + triggers, max 80). The app's package parser has no embedded-skills field, so put long reusable procedures in a playbook and tell the bot it may save one as a Markdown skill with `skill_manage` after the user approves. For an Explore catalog entry, the reusable skill also ships as `teams/<id>/skills/<slug>/SKILL.md` (Step 9). |
 | Scheduled routine | `routines[]` with `schedule.type: daily` (HH:MM + weekdays) or `once`, `runOn: maus`, `durationMinutes`, `enabledAfterInstall: false` |
 | Event/webhook routine | Describe in the body under `## Suggested routines` as a manual setup step (the package schema has no webhook trigger). Never include a webhook URL or key. |
 | Connected apps / plugins | `requirements.apps[]` with `slug`, `label`, plain-language `reason`, `optional` |
@@ -102,7 +102,7 @@ For every field you will write, check:
 ### Step 6: Write the package
 Target path: `packages/<id>.md`. The `id` must equal the filename stem and match `^[a-z0-9][a-z0-9-]*$`. Use a neutral, outcome-based slug (e.g. `bot-design-desk`, `cm-bot-architect`). If the repo owner prefers a creator-based convention, follow the existing files in `packages/`.
 
-**Frontmatter** (YAML, `botmrr: 1`). Required: `id`, `release` (semver, start `1.0.0`), `name` (≤ 100), `tagline` (≤ 160), `summary` (≤ 2,000), `category`, `author` (`name: BotMRR`, `url: https://botmrr.io` unless told otherwise), `license: MIT`, `tags`, `outcomes` (1–12, each ≤ 240), `setupMinutes` (1–240), `requirements` (`apps`, `capabilities`, `platforms`), `agents`, `chiefOfStaff`. Optional: `rooms`, `routines`, `playbooks`, `skills`, `examples`, `proof`.
+**Frontmatter** (YAML, `botmrr: 1`). Required: `id`, `release` (semver, start `1.0.0`), `name` (≤ 100), `tagline` (≤ 160), `summary` (≤ 2,000), `category`, `author` (`name: BotMRR`, `url: https://botmrr.io` unless told otherwise), `license: MIT`, `tags`, `outcomes` (1–12, each ≤ 240), `setupMinutes` (1–240), `requirements` (`apps`, `capabilities`, `platforms`), `agents`, `chiefOfStaff`. Optional: `rooms`, `routines`, `playbooks`, `examples`, `proof`. Do not add a `skills` field; the app parser ignores it.
 
 **Body sections** (in this order; the first five and the last two are required by the validator):
 1. `# <name>`, then the tagline, then the "Give this file to your Chief of Staff" callout
@@ -128,7 +128,7 @@ npm ci
 npm test
 ```
 Fix every error in the new file. If the checker can't run (for example, when a ProjexDesk bot has no checkout), check the file manually against Step 6 and say so in the report.
-If a ProjexDesk checkout is available, also confirm the file imports through ProjexDesk's package parser (`parseBotPackage` in `server/bot-package.ts`). Its limits are the source of truth: agent keys are unique, playbook and skill references resolve, room members exist, routines are disabled after install, and embedded skill frontmatter matches its entry.
+If a ProjexDesk checkout is available, also confirm the file imports through ProjexDesk's package parser (`parseBotPackage` in `server/bot-package.ts`). Its limits are the source of truth: agent keys are unique, playbook and skill references resolve, room members exist, routines are disabled after install, and unknown fields such as `skills` are dropped silently.
 
 ### Step 8: Report for human review
 Return:
